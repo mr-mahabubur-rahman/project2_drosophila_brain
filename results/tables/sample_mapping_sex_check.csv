@@ -1,0 +1,9 @@
+sample,lncRNA:roX1,lncRNA:roX2,declared_sex,roX_mean
+Female_Cocaine_1,0.062,0.008,Female,0.035
+Female_Cocaine_2,0.112,0.015,Female,0.064
+Female_Sucrose_1,3.956,2.385,Female,3.17
+Female_Sucrose_2,3.835,2.149,Female,2.992
+Male_Cocaine_1,0.059,0.011,Male,0.035
+Male_Cocaine_2,0.068,0.013,Male,0.04
+Male_Sucrose_1,3.838,2.296,Male,3.067
+Male_Sucrose_2,3.959,2.351,Male,3.155

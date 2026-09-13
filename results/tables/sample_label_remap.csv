@@ -1,0 +1,9 @@
+folder,n_cells,geo_position,label_said_sex,label_said_treatment,TRUE_sex,TRUE_treatment,TRUE_replicate,sex_changed,treatment_changed
+Female_Cocaine_1,13072,S1,Female,Cocaine,Female,Sucrose,1,False,True
+Female_Cocaine_2,9367,S2,Female,Cocaine,Female,Sucrose,2,False,True
+Female_Sucrose_1,9072,S3,Female,Sucrose,Male,Sucrose,1,True,False
+Female_Sucrose_2,11693,S4,Female,Sucrose,Male,Sucrose,2,True,False
+Male_Cocaine_1,10437,S5,Male,Cocaine,Female,Cocaine,1,True,False
+Male_Cocaine_2,11124,S6,Male,Cocaine,Female,Cocaine,2,True,False
+Male_Sucrose_1,13193,S7,Male,Sucrose,Male,Cocaine,1,False,True
+Male_Sucrose_2,11033,S8,Male,Sucrose,Male,Cocaine,2,False,True

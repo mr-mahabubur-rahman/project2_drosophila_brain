@@ -1,0 +1,11 @@
+gene,sex,paper_says,our_log2FC,agrees
+IA-2,Male,up,0.442,True
+lncRNA:CR34335,Male,up,0.529,True
+mt:lrRNA,Male,up,3.034,True
+lncRNA:roX2,Male,down,0.113,False
+ninaE,Male,down,1.286,False
+IA-2,Female,up,0.163,True
+lncRNA:CR34335,Female,up,0.959,True
+mt:lrRNA,Female,up,-0.103,False
+lncRNA:roX2,Female,down,0.121,False
+ninaE,Female,down,0.893,False

@@ -55,6 +55,62 @@ for _d in (RESULTS_DIR, CHECKPOINT_DIR, FIG_DIR, TABLE_DIR):
     _d.mkdir(parents=True, exist_ok=True)
 
 # ----------------------------------------------------------------------
+# SAMPLE LABEL CORRECTION  —  read docs/data_provenance.md before changing
+# ----------------------------------------------------------------------
+# The supplied folder names DO NOT match their contents.
+#
+# Evidence: sex-specific markers separate the eight samples cleanly into two
+# groups of four, but the split follows the TREATMENT field of the folder name,
+# not the SEX field.
+#     roX1/roX2 (male-specific)  high in the four *_Sucrose_* folders
+#     Yp1-Yp3, Sxl (female)      high in the four *_Cocaine_* folders
+# Yolk proteins are transcribed only in females and read 0.000-0.001 in all four
+# Sucrose-labelled samples, so this cannot be a drug effect.
+#
+# Cause: the authors' published R code
+# (github.com/vshanka23/The-Drosophila-Brain-on-Cocaine-at-Single-Cell-Resolution)
+# lists the deposition order of the eight samples:
+#     S1 Female_sucrose_R1   S5 Female_cocaine_R1
+#     S2 Female_sucrose_R2   S6 Female_cocaine_R2
+#     S3 Male_sucrose_R1     S7 Male_cocaine_R1
+#     S4 Male_sucrose_R2     S8 Male_cocaine_R2
+# Pairing that order against the folder names sorted ALPHABETICALLY reproduces
+# the observed marker pattern for all eight samples. The folders were built by
+# assigning GSM accessions in GEO order to folder names in alphabetical order.
+#
+# CONFIDENCE — state this distinction in your Methods:
+#   sex       CONFIRMED. Two independent marker panels, opposite directions,
+#             non-overlapping groups.
+#   treatment INFERRED from the deposition order. No marker reports whether a
+#             fly ate cocaine. Supported independently: under these labels the
+#             male:female DE ratio is ~8x, and the paper reports males
+#             responding more than females (691 vs 322, ~2.1x).
+#
+# folder name -> (sex, treatment, replicate, GEO position)
+SAMPLE_REMAP = {
+    "Female_Cocaine_1": ("Female", "Sucrose", "1", "S1"),
+    "Female_Cocaine_2": ("Female", "Sucrose", "2", "S2"),
+    "Female_Sucrose_1": ("Male",   "Sucrose", "1", "S3"),
+    "Female_Sucrose_2": ("Male",   "Sucrose", "2", "S4"),
+    "Male_Cocaine_1":   ("Female", "Cocaine", "1", "S5"),
+    "Male_Cocaine_2":   ("Female", "Cocaine", "2", "S6"),
+    "Male_Sucrose_1":   ("Male",   "Cocaine", "1", "S7"),
+    "Male_Sucrose_2":   ("Male",   "Cocaine", "2", "S8"),
+}
+
+# Set False only to reproduce the original (incorrect) labelling for comparison.
+APPLY_SAMPLE_REMAP = True
+
+# Gene symbols pandas misreads as missing values when parsing features.tsv.
+# 'nan' is nanchung (Dmel_CG5842), a TRPV channel. Left unhandled it becomes
+# NaN in var_names, which breaks h5ad writing and every marker lookup.
+# 'na' (narrow abdomen, Dmel_CG1517) is NOT affected -- lowercase 'na' is not
+# in pandas' default NA list.
+GENE_NAME_NA_FIXES = {
+    "Dmel_CG5842": "CG5842",   # 'nan' / nanchung
+}
+
+# ----------------------------------------------------------------------
 # QUALITY CONTROL
 # ----------------------------------------------------------------------
 # The paper (Baker et al. 2021, Methods) filtered cells to 300-2500 detected
