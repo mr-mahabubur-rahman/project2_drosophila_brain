@@ -27,22 +27,24 @@ from pathlib import Path
 NB_DIR = Path(__file__).resolve().parent.parent / "notebooks"
 NB_DIR.mkdir(exist_ok=True)
 
+# NOTE: no trailing newlines here -- code() adds one between each line.
+# Including them too gives a blank line between every import.
 HEADER = [
-    "import sys\n",
-    "from pathlib import Path\n",
-    "sys.path.insert(0, str(Path.cwd().parent / 'scripts'))\n",
-    "\n",
-    "import numpy as np\n",
-    "import pandas as pd\n",
-    "import matplotlib.pyplot as plt\n",
-    "import scanpy as sc\n",
-    "import anndata as ad\n",
-    "\n",
-    "import config\n",
-    "\n",
-    "sc.settings.verbosity = 3\n",
-    "sc.settings.figdir = config.FIG_DIR\n",
-    "sc.settings.set_figure_params(dpi=100, facecolor='white', frameon=False)\n",
+    "import sys",
+    "from pathlib import Path",
+    "sys.path.insert(0, str(Path.cwd().parent / 'scripts'))",
+    "",
+    "import numpy as np",
+    "import pandas as pd",
+    "import matplotlib.pyplot as plt",
+    "import scanpy as sc",
+    "import anndata as ad",
+    "",
+    "import config",
+    "",
+    "sc.settings.verbosity = 3",
+    "sc.settings.figdir = config.FIG_DIR",
+    "sc.settings.set_figure_params(dpi=100, facecolor='white', frameon=False)",
     "sc.logging.print_header()",
 ]
 
@@ -109,9 +111,7 @@ write("01_load_data.ipynb", [
        "",
        "Read this table before running the loader. The left column is what the folder says;",
        "the right is what the data actually contains."),
-    code("import pandas as pd",
-         "",
-         "remap = pd.DataFrame(",
+    code("remap = pd.DataFrame(",
          "    [(k, *v) for k, v in config.SAMPLE_REMAP.items()],",
          "    columns=['folder', 'TRUE_sex', 'TRUE_treatment', 'replicate', 'geo_position'],",
          ")",
