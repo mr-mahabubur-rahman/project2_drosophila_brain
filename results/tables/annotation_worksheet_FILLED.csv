@@ -1,0 +1,31 @@
+cluster,n_cells,pct_of_total,top_markers,cell_type_ANNOTATE_ME,paper_cluster_match,evidence_notes,confidence
+0,8502,9.87,"lncRNA:mimi, toy, VAChT",Cholinergic neurons,C6 (toy/bi),VAChT+ cholinergic; toy shared with paper C6. VERIFY VAChT/ChAT on dotplot.,medium
+1,3196,3.71,"CG8369, lncRNA:CR34335, MtnA",Glia type 1,C13 (Obp44a/CG8369/CG15201),"CG8369 shared with C13. CHECK repo — if low, not glia.",medium
+2,143,0.17,"CG9394, CG1552, Gs2",Glial type 2 (astrocyte-like),C19 (Gs2/CG1552/CG8369),"Gs2 + CG1552 both shared with C19. Also 2nd on Eaat1 panel (1.83). Small, n=143.",high
+3,1047,1.21,"vvl, nAChRalpha6, CG42541",Optic lobe type 2,C14 (pdm3/vvl/CG18598),vvl shared with C14.,high
+4,7543,8.75,"VGlut1, cpx, CG34355",Glutamatergic neurons type 3,C3 (VGlut/CG34355/CG9650),VGlut1(=VGlut) + CG34355 both shared with C3.,high
+5,695,0.81,"lncRNA:CR34335, CG13631, eEF1alpha1",Unannotated,,Markers are high-expression/housekeeping (eEF1alpha1). Possible low-quality or depth-driven cluster. NOT confidently assignable.,low
+6,10273,11.92,"VGlut1, IA-2, CG2269",Glutamatergic neurons type 1,C0 (VGlut/CG2269/CG32017),VGlut1(=VGlut) + CG2269 both shared with C0. Largest cluster.,high
+7,9058,10.51,"CG31221, IA-2, lncRNA:Hsromega",Neuropeptide/cholinergic neurons,C2 (spab/jeb/CG31221),"CG31221 shared with C2. CHECK spab, jeb.",medium
+8,1913,2.22,"Vmat, ple, DAT",Dopaminergic neurons,C29 (DAT/Vmat/ple),All three markers match C29 exactly. Unambiguous.,very high
+9,1775,2.06,"disco, disco-r, CG31221",Optic lobe neurons,,disco/disco-r are optic lobe development genes. No clean paper triplet match.,medium
+10,1462,1.7,"nAChRalpha6, sosie, beat-Ic",Olfactory projection neurons,C8 (sosie/acj6/nAChRalpha6),sosie + nAChRalpha6 both shared with C8.,high
+11,3032,3.52,"Imp, futsch, sesB",Central brain B cholinergic neurons,C10 (mbl/Imp/CG31345),Imp shared with C10; mbl also present. NOTE: 74.5% female after depth matching (background 56.4%) — real sex bias. Median depth 1376 vs 835 genes; boundary partly depth-driven. sesB/respiratory genes in markers likely depth artefact.,high
+12,3822,4.44,"mub, jdp, Pka-C1",Kenyon cells,C11 (jdp/Pka-R2/Rgk1),CONFIRMED on two independent panels: paper triplet jdp 4.29 / Pka-R2 3.05 / Rgk1 2.03; guide panel ey 1.08 / Adcy1(rut) 1.90 / sNPF 2.26 / Dop1R2 1.39. Tops C11 panel (2.44).,very high
+13,9472,10.99,"CG14989, Gad1, CG10804",Central brain GABAergic neurons type 1,C1 (Gad1/CG14989/CG32017),Gad1 + CG14989 both shared with C1.,high
+14,893,1.04,"dths, cpx, CG18598",Unannotated,C26 (shakB/CG3134/CG18598)?,Only CG18598 shared. Insufficient evidence.,low
+15,2221,2.58,"SoxN, CG42750, acj6",Unannotated (antennal/optic lobe mix),C16 (CNMaR/SoxN/CG42750),SoxN + CG42750 both shared with C16; tops C16 panel (2.74 vs 0.96 next). Paper could not annotate C16 either — keep label as unannotated.,high
+16,7093,8.23,"pros, VAChT, acj6",Central brain A type 1,C5 (pros/dati/spab),"pros shared with C5; VAChT+ cholinergic. CHECK dati, spab.",medium
+17,3408,3.95,"ct, Rbp6, Jhbp2",GABAergic neurons type 3,C12 (ct/Gad1/CG14989),"ct shared with C12. CHECK Gad1 — if low, reconsider.",medium
+18,1998,2.32,"Rbp6, Cbp53E, ct",Unannotated,C12?,Shares ct and Rbp6 with cluster 17 but distinct. Needs its own evidence.,low
+19,526,0.61,"CG1552, nrv2, CG8369",Glial type 2,C19 (Gs2/CG1552/CG8369),CG1552 + CG8369 both shared with C19. nrv2 is glial. Likely same type as cluster 2.,medium
+20,1542,1.79,"CG14989, Octbeta1R, Bx",GABAergic and monoaminergic neurons,C23 (Nos/Octbeta1R/CG14989),Octbeta1R + CG14989 both shared with C23.,high
+21,474,0.55,"Pdh, fabp, pkm",Unannotated (pigment/retinal support?),,"Pdh = photoreceptor dehydrogenase, fabp lipid binding. Possibly retinal support tissue. No paper match. CHECK repo and ninaE.",low
+22,1181,1.37,"beat-IIa, Con, nAChRalpha7",Unannotated,,beat-IIa/Con are axon guidance; nAChRalpha7 cholinergic. No clean match.,low
+23,526,0.61,"CG43795, CG42342, hth",Unannotated,C28 (Frq1/CG43795/CG14274)?,Only CG43795 shared. Insufficient.,low
+24,1915,2.22,"Jhbp2, Eaat1, CG15522",Astrocytes,C17 (Eaat1/CG2016/CG15522),Eaat1 + CG15522 both shared with C17; tops C17 panel (3.24 vs 1.83 next). Note CG2016 absent from this reference.,very high
+25,822,0.95,"lncRNA:CR34335, Oda, CG3168",Surface glia and fat body,C22 (Cys/SPARC/CG3168),CG3168 shared with C22; tops C22 panel (2.94 vs 0.96 next). CG3168 is the SLC22 transporter the paper highlights in the blood-brain barrier.,high
+26,444,0.52,"Arr2, Arr1, ninaE",Photoreceptor cells,C30 (Arr2/Arr1/ninaE),All three markers match C30 exactly. Unambiguous.,very high
+27,464,0.54,"VGlut1, Argk1, Fim",Glutamatergic neurons (subtype),,VGlut1(=VGlut) positive but no clean paper match.,low
+28,427,0.5,"jdp, 14-3-3zeta, Tomosyn",Unannotated,,"NOT Kenyon cells despite jdp 4.55 and 2nd place on C11 panel (2.07): ey 0.017, Adcy1 0.395, sNPF 0.406, Dop1R2 0.075 all at background. Neuronal (elav 1.64, repo 0.02), Fas2-high. Identity unresolved.",low
+29,310,0.36,"VGlut1, CG43689, Lmx1a",Glutamatergic neurons (subtype),,VGlut1(=VGlut) positive. Lmx1a is a vertebrate-style name — check the fly gene.,low

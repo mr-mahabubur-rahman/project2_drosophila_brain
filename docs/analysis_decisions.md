@@ -30,6 +30,14 @@ a log written at the time is more accurate than one reconstructed afterwards.
 | DE test | Wilcoxon | Scanpy default; non-parametric, appropriate for zero-inflated counts. Paper used MAST | Wilcoxon |
 | DE threshold | \|log2FC\| > 1, BH p < 0.05; **paper equivalent 1.44 also reported** | Scanpy reports log2, the paper natural log. Reporting both prevents a false comparison | \|log2FC\| > 1 |
 | Enrichr libraries | Auto-detected from the Fly catalogue | The guide's `KEGG_2021_Human` does not exist in the Fly modality and returns nothing useful | GO_BP_2023, KEGG_2021_Human |
+**Cluster 11 (res 0.8), n=3,032.** Neuronal (elav/nSyb high, repo low), top
+markers Imp / futsch / mbl / mamo / CG31345 — corresponds to the paper's
+mbl/Imp/CG31345 cluster. 70.8% female overall; 74.5% female among depth-matched
+cells (1200–1600 genes) against a 56.4% background, so the sex bias is
+biological, not a capture artefact. Fat body contamination ruled out (Yp1–Yp3
+at background). Note: median depth 1,376 genes vs 835 elsewhere, and several
+respiratory-chain and ribosomal genes appear among its markers — the cluster
+boundary is partly depth-influenced.
 
 ## Decisions still to make
 
