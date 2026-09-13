@@ -1,0 +1,27 @@
+# Data — never commit matrices (hundreds of MB; GEO is the canonical source)
+data/
+data_raw/
+*.tar
+*.mtx
+*.mtx.gz
+
+# Regenerable checkpoints
+results/checkpoints/
+*.h5ad
+cache/
+.scanpy_cache/
+
+# Environment
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Keep the folder structure visible in a clean clone
+!results/figures/.gitkeep
+!results/tables/.gitkeep
+!data/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db

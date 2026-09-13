@@ -1,0 +1,28 @@
+# Core single-cell stack
+scanpy>=1.10
+anndata>=0.10
+numpy>=1.24
+pandas>=2.0
+scipy>=1.11
+matplotlib>=3.7
+seaborn>=0.13
+
+# Leiden clustering backend — scanpy does NOT install these itself,
+# and sc.tl.leiden fails with an unhelpful error if they are missing.
+igraph>=0.11
+leidenalg>=0.10
+
+# Pathway enrichment
+gseapy>=1.1
+
+# JupyterLab path
+jupyterlab>=4.0
+ipykernel>=6.25
+ipywidgets>=8.1
+
+# Optional: batch integration. Uncomment if UMAPs show sample-driven clusters.
+# harmonypy>=0.0.9
+
+# After your first successful run, freeze the EXACT versions so peer reviewers
+# reproduce your environment rather than a similar one:
+#     uv pip freeze > requirements.lock.txt

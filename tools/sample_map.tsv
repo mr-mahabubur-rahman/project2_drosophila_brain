@@ -1,0 +1,27 @@
+# GSM_prefix<TAB>Sample_Name
+#
+# FILL THIS IN YOURSELF from the GEO series page:
+#   https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE152495
+# and cross-check against Supplemental Table S2 of paper.pdf.
+#
+# The GSM accession numbers below are PLACEHOLDERS — replace them with the
+# real ones you read off the GEO page. Sample names must match exactly the
+# Sex_Treatment_Replicate pattern; script 01 validates them and will stop
+# if they do not.
+#
+# Verifying the mapping is not busywork: a swapped label produces a pipeline
+# that runs cleanly and answers the wrong question.
+#
+# Sanity check after loading: female samples should show high roX1/roX2
+# (male-specific lncRNAs are LOW in females — the paper reports roX2 among
+# its cocaine-responsive genes precisely because it is sex-linked). If your
+# "Female" samples are roX2-high, your mapping is inverted.
+#
+GSM_PLACEHOLDER_1	Female_Sucrose_1
+GSM_PLACEHOLDER_2	Female_Sucrose_2
+GSM_PLACEHOLDER_3	Female_Cocaine_1
+GSM_PLACEHOLDER_4	Female_Cocaine_2
+GSM_PLACEHOLDER_5	Male_Sucrose_1
+GSM_PLACEHOLDER_6	Male_Sucrose_2
+GSM_PLACEHOLDER_7	Male_Cocaine_1
+GSM_PLACEHOLDER_8	Male_Cocaine_2
