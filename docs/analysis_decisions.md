@@ -39,6 +39,14 @@ at background). Note: median depth 1,376 genes vs 835 elsewhere, and several
 respiratory-chain and ribosomal genes appear among its markers — the cluster
 boundary is partly depth-influenced.
 
+
+**Female DE genes Yp1-Yp3: ambient RNA, excluded.** Detection rate 27.2% of
+cells in Female_Cocaine_R2 vs 3.2-4.9% in sucrose samples; Female_Cocaine_R1
+intermediate at 7.0%. Signal distributed across all cell types including
+photoreceptors (Yp3 mean 0.663) and Kenyon cells (0.226) — populations that do
+not transcribe yolk proteins. Consistent with free transcripts from lysed fat
+body partitioning into droplets, with one dissection far more affected.
+Not a cocaine response.
 ## Decisions still to make
 
 - [ ] `N_PCS` — currently 30. Check the elbow in `pca_variance_03_pca_variance.png`.
