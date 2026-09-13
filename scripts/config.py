@@ -219,27 +219,47 @@ ENRICHR_LIBRARIES_PREFERRED = [
 N_GENES_FOR_ENRICHMENT = 150
 
 # ----------------------------------------------------------------------
-# MARKER GENES FOR CLUSTER ANNOTATION
+# MARKER GENES — RESOLVED against this dataset's reference annotation
 # ----------------------------------------------------------------------
-# From the project guide's table plus the paper's Supplemental Table S4.
-# VERIFY EVERY ONE OF THESE AGAINST FLYBASE before you cite them. Marker lists
-# are a known AI hallucination risk and the course policy puts validation on
-# you, not on the tool.
+# This reference substitutes vertebrate ortholog names for five fly symbols.
+# Verified by gene ID with tools/resolve_markers.py; worksheet in
+# results/tables/marker_resolution.csv. The symbols below are the ones that
+# actually appear in adata.var_names -- the true fly symbol is in the comment.
+#
+# CASE SENSITIVITY WARNING: in this reference `trh` (lowercase) is
+# Dmel_CG42865 = trachealess, a tracheal transcription factor. The serotonin
+# synthesis enzyme Trh (CG9122) is called `Trhn` here. A case-insensitive
+# marker match finds trachealess, reports success, and would label a cluster
+# "serotonergic" on the strength of a tracheal gene. Never match markers
+# case-insensitively in Drosophila.
 CANONICAL_MARKERS = {
-    "Glia (pan)": ["repo"],
-    "Astrocyte-like glia": ["alrm", "Eaat1", "Gat"],
-    "Surface glia / BBB": ["moody", "Mdr65", "Tret1-1"],
-    "Cortex/ensheathing glia": ["wrapper", "zyd"],
-    "Neuron (pan)": ["elav", "nSyb", "brp", "Syt1"],
-    "Kenyon cells (MB)": ["ey", "Fas2", "rut", "dnc", "sNPF", "Dop1R2"],
-    "Cholinergic": ["VAChT", "ChAT"],
-    "GABAergic": ["Gad1", "VGAT"],
-    "Glutamatergic": ["VGlut"],
-    "Dopaminergic": ["ple", "DAT", "Ddc"],
-    "Serotonergic": ["SerT", "Trh"],
-    "Octopaminergic": ["Tdc2", "Tbh"],
-    "Photoreceptor": ["ninaE", "Rh3", "Rh4", "trp"],
-    "Monoaminergic (vesicular)": ["Vmat"],
+    "Glia (pan)": ["repo"],                                  # CG31240
+    "Astrocyte-like glia": ["alrm", "Eaat1", "Gat"],          # CG11910, CG3747, CG1732
+    "Surface glia / BBB": ["moody", "Mdr65", "Tret1"],        # CG4322, CG10181, CG30035 (= Tret1-1)
+    "Cortex/ensheathing glia": ["wrapper", "zyd"],            # CG10382, CG2893
+    "Neuron (pan)": ["elav", "nSyb", "brp", "Syt1"],          # CG4262, CG17248, CG42344, CG3139
+    "Kenyon cells (MB)": ["ey", "Fas2", "Adcy1", "Pde4",      # CG1464, CG3665, CG9533 (= rut), CG32498 (= dnc)
+                          "sNPF", "Dop1R2"],                  # CG13968, CG18741
+    "Cholinergic": ["VAChT", "ChAT"],                         # CG32848, CG12345
+    "GABAergic": ["Gad1", "VGAT"],                            # CG14994, CG8394
+    "Glutamatergic": ["VGlut1"],                              # CG9887 (= VGlut; NOT the vertebrate paralog)
+    "Dopaminergic": ["ple", "DAT", "Ddc"],                    # CG10118, CG8380, CG10697
+    "Serotonergic": ["SerT", "Trhn"],                         # CG4545, CG9122 (= Trh)
+    "Octopaminergic": ["Tdc2", "Tbh"],                        # CG30446, CG1543
+    "Photoreceptor": ["ninaE", "Rh3", "Rh4", "trp"],          # CG4550, CG10888, CG9668, CG7875
+    "Monoaminergic (vesicular)": ["Vmat"],                    # CG33528
+}
+
+# Reference symbol -> true fly symbol. Use these when labelling figures and
+# writing the report, so a reader is not left wondering why a Drosophila paper
+# cites VGlut1. Note this reference also contains a separate VGlut2 (CG4288) --
+# these are NOT the vertebrate paralogs.
+REFERENCE_SYMBOL_ALIASES = {
+    "VGlut1": "VGlut",
+    "Adcy1": "rut",
+    "Pde4": "dnc",
+    "Trhn": "Trh",
+    "Tret1": "Tret1-1",
 }
 
 # Sex-linked controls. roX1/roX2 are male-specific lncRNAs -- used by
