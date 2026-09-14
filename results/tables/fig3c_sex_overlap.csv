@@ -1,0 +1,7 @@
+cell_type,paper_cluster,female_only,shared,male_only,jaccard
+Central brain B cholinergic neurons,C10,10,0,63,0.0
+GABAergic neurons type 3,C12,31,1,21,0.019
+Unannotated (antennal/optic lobe mix),C16,56,2,15,0.027
+Surface glia and fat body,C22,34,0,14,0.0
+Kenyon cells,,60,3,30,0.032
+Dopaminergic neurons,,51,0,35,0.0
