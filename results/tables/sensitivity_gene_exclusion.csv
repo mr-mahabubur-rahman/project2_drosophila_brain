@@ -1,0 +1,5 @@
+gene_set,n_genes,male,female,ratio
+all genes,12189,90,14,6.43
+minus mito,12177,88,14,6.29
+minus mito+respiratory,12068,83,13,6.38
+minus mito+respiratory+ribosomal,11909,82,12,6.83

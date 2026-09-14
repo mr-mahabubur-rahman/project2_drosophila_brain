@@ -131,13 +131,21 @@ in females, a ratio of 1.65-fold** — close to the 2.15-fold reported by Baker
 et al. and four times smaller than the 6.43-fold obtained from the same data
 analysed as a single pooled comparison per sex.
 
-The two tests differ in how a brain-wide signal propagates. Mitochondrial
-transcripts are elevated in male cocaine cells across every cluster (§3.6). In a
-pooled comparison of ~44,000 male cells this shared signal contributes to one
-test with very large power and dominates the gene count. Testing clusters
-separately splits those cells across 23 smaller comparisons in which no single
-shared signal dominates, and the ratio falls to a value close to the published
-one.
+The two tests differ in how a spatially restricted signal propagates. Female
+responses are concentrated in a few cell types — Kenyon cells (63 genes), the
+antennal/optic lobe cluster (58) and dopaminergic neurons (51) — followed by a
+steep drop. Male responses are more evenly distributed across clusters (67, 63,
+59, 53, 48, 37, 35, 33). A response confined to one cell type is diluted when
+all 42,356 female cells are tested together, whereas a response present across
+many cell types survives pooling. The pooled comparison therefore favours
+brain-wide responses and understates cell-type-restricted ones.
+
+This was tested directly. Excluding all mitochondrial, respiratory-chain and
+ribosomal genes (280 genes) changed the pooled ratio from 6.43-fold to
+6.83-fold, with male counts falling only from 90 to 82 (Figure 5b). The
+mitochondrial genes are therefore the most statistically significant male hits
+but are **not** the cause of the count asymmetry, and no technical explanation
+for the pooled–per-cluster discrepancy is supported by the data.
 
 The bias also reverses in specific cell types. Females exceeded males in **6 of
 23 clusters**, including several of the paper's strongest responders: Kenyon
@@ -146,7 +154,7 @@ cells (63 versus 33), the antennal/optic lobe cluster corresponding to their C16
 body (34 versus 14). The aggregate male bias therefore does not describe every
 population.
 
-### 3.6 The strongest DE genes in both sexes track technical covariates
+### 3.6 The leading genes in each sex coincide with technical covariates
 
 **In males**, the most significant genes were dominated by mitochondrial and
 mitochondria-associated transcripts: `mt:lrRNA` (+3.05 log₂FC), `Cyt-c-p`
@@ -161,8 +169,14 @@ median 0.373% in cocaine versus 0.058% in sucrose, a 6.4-fold difference
 no `mt:lrRNA` effect (−0.03).
 
 `RpL41` is an exception worth noting: it is named by Baker et al. among their
-globally cocaine-responsive genes and replicates here independently of the
-mitochondrial signal.
+globally cocaine-responsive genes and replicates here.
+
+**The scope of this confound is limited.** Excluding all 280 mitochondrial,
+respiratory-chain and ribosomal genes reduced the male count from 90 to 82 and
+left the male:female ratio unchanged (6.43-fold to 6.83-fold). The mitochondrial
+signal therefore affects which genes rank highest, and the interpretation of any
+individual mitochondrial gene or of the oxidative-phosphorylation enrichment
+below, but it does not account for the magnitude of the male response.
 
 Pathway enrichment reflects the same pattern. Oxidative phosphorylation and
 mitochondrial electron transport were the top enriched terms in three separate
@@ -187,7 +201,41 @@ opposite direction to the published result. As a photoreceptor gene, its
 abundance in a brain dissociation depends on retinal carry-over rather than
 treatment.
 
-### 3.7 Cell-level results are directionally corroborated at replicate level
+### 3.7 No individual gene shows a significant sex x treatment interaction
+
+Dimorphism is established above, and in the original study, by comparing gene
+lists derived from separate per-sex analyses. That comparison does not test
+whether any gene responds *differently* by sex: a gene significant in one
+analysis and not the other may not differ significantly between them (Gelman &
+Stern 2006).
+
+Fitting `expression ~ sex + treatment + sex:treatment` to pseudobulk profiles
+(9,397 genes, 8 samples) returned **no genes with a significant interaction
+term** at FDR < 0.05, and none with a significant main effect of treatment. Of
+the 90 genes called significant in males by separate per-sex testing, none
+showed a significant interaction.
+
+With four residual degrees of freedom this is an expected outcome rather than
+evidence of absence. Genes with the largest interaction coefficients —
+`Mic10b` (2.57), `sun` (1.19), `Lztr1` (1.02) — are plausible candidates but
+are not distinguishable from noise at this replicate number. The finding is
+that **the design supports dimorphism in aggregate but cannot establish it for
+any individual gene**, and the same limitation applies to the original analysis.
+
+### 3.8 The response ranking is unstable at matched statistical power
+
+Downsampling every cluster to 400 cells and repeating over three random seeds
+gives a ranking free of cluster-size effects. Surface glia and fat body ranked
+third (11.7 ± 2.6 genes), consistent with its third-place position under
+per-1000-cell normalisation. Kenyon cells fell to fifth (7.3 ± 2.6) from first
+in the raw count.
+
+Standard deviations were large relative to the means — the highest-ranked
+cluster varied between 10 and 28 genes across seeds — so ordering beyond the
+first few positions is not stable. Surface glia is the only cell type ranking
+highly under all three approaches.
+
+### 3.9 Cell-level results are directionally corroborated at replicate level
 
 Pseudobulk analysis (summing counts per sample, n = 2 versus 2) found no
 significant genes, as expected at this replicate number. Direction agreement
@@ -220,13 +268,18 @@ significant transcripts are mitochondrial, and mitochondrial content differs
 6.4-fold between treatment arms. In females, the most significant transcripts
 are yolk proteins present as ambient RNA, concentrated in one dissection.
 
-These are not competing explanations to be weighed against a biological one —
-they are the more parsimonious account. Cocaine does not induce yolk protein
-transcription in photoreceptors. A 6.4-fold difference in mitochondrial fraction
-between treatment groups, present in one sex and absent in the other, is more
-readily explained by dissociation stress than by drug action, particularly as
-the behavioural phenotype in the original study is also male-specific and the
-two would be conflated.
+For the female yolk-protein result these are not competing explanations to be
+weighed against a biological one — they are the more parsimonious account.
+Cocaine does not induce yolk protein transcription in photoreceptors.
+
+The male mitochondrial case is narrower than it first appears. A 6.4-fold
+difference in mitochondrial fraction between treatment groups, present in one
+sex and absent in the other, is more readily explained by dissociation stress
+than by drug action. But excluding mitochondrial and respiratory genes
+altogether left the male response count and the male:female ratio essentially
+unchanged, so the confound affects the identity and ranking of the top male
+genes — and the oxidative-phosphorylation pathway result — without accounting
+for the response as a whole.
 
 The female data functions as an internal control throughout. Where males show a
 mitochondrial difference between arms, females do not; where males show
@@ -251,14 +304,22 @@ identifies metabolic pathway remodelling. This reanalysis suggests that at least
 part of that signal reflects mitochondrial content differing between the groups
 being compared, rather than regulated expression.
 
-### The pooled analysis overstates the male bias
+### The male bias is real, but its magnitude is analysis-dependent
 
-That the per-cluster ratio (1.65-fold) sits closer to the published value than
-the pooled ratio (6.43-fold) is itself evidence that the pooled result is
-inflated by a shared technical signal. A confound present across all male cells
-contributes maximally to a single high-powered test and minimally to 23 smaller
-ones. Reporting both ratios, rather than the pooled figure alone, gives a more
-honest picture of how much of the dimorphism is cell-type-specific biology.
+The pooled and per-cluster ratios differ four-fold (6.43 versus 1.65) on the
+same corrected data. A technical explanation was tested and rejected: excluding
+mitochondrial, respiratory and ribosomal genes did not reduce the pooled ratio.
+
+The more likely explanation is biological. Female responses concentrate in a
+few cell types while male responses distribute across many. Pooling dilutes a
+cell-type-restricted response and preserves a distributed one, so the pooled
+comparison systematically favours the male pattern. On this reading the sexes
+differ not only in how *much* of the brain responds but in how *focally* —
+which is a stronger and more specific claim than "males respond more", and one
+the original analysis, being pooled, could not have detected.
+
+Reporting both ratios is therefore necessary. Either alone is misleading about
+what is being measured.
 
 ### Cluster size confounds the response ranking
 
