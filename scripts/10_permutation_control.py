@@ -97,13 +97,25 @@ def main():
                            for s in samples)
             if as_compl:
                 continue                      # same contrast, reversed sign
+            # Null splits also come in complementary pairs: {A,B} vs {C,D} is
+            # the same contrast as {C,D} vs {A,B}. Keep only one of each, or
+            # the figure implies four independent nulls where there are two.
+            if not as_truth and samples[0] not in combo:
+                continue
             kind = "REAL (cocaine vs sucrose)" if as_truth else "null"
 
             n, genes = de_count(sub, assign)
             if n is None:
                 continue
             label = " + ".join(c.replace(f"{sex}_", "") for c in combo)
-            rows.append({"sex": sex, "kind": kind, "group_A": label, "n_DE": n})
+            # Which axis does this split follow? The replicate axis groups both
+            # R1 samples against both R2 samples.
+            reps = {c: c.rsplit("_", 1)[1] for c in samples}
+            axis = ("treatment" if as_truth
+                    else "replicate" if len({reps[c] for c in combo}) == 1
+                    else "diagonal")
+            rows.append({"sex": sex, "kind": ("real" if as_truth else "null"), "axis": axis,
+                         "group_A": label, "n_DE": n})
             gene_sets[(sex, kind, label)] = genes
             print(f"  {kind:<26} A = {label:<30} {n:>4} genes")
 

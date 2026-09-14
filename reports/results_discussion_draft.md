@@ -113,6 +113,10 @@ Males showed **90 differentially expressed genes** and females **14**
 differ as expected given Wilcoxon versus MAST and BH versus Bonferroni
 correction.
 
+This ratio is, however, the least robust of several that can be computed from
+the same data (§3.5), and the female term in it does not survive comparison
+against its own background (§3.9). Both qualifications are developed below.
+
 Overlap between sexes was near-zero: 89 male-only genes, 13 female-only, and
 1 shared. The original reported limited overlap; this analysis finds less still.
 
@@ -235,7 +239,37 @@ cluster varied between 10 and 28 genes across seeds — so ordering beyond the
 first few positions is not stable. Surface glia is the only cell type ranking
 highly under all three approaches.
 
-### 3.9 Cell-level results are directionally corroborated at replicate level
+### 3.9 The female response is below its own background
+
+A differentially expressed gene count is uninterpretable without a baseline.
+Within each sex there are four samples and six possible 2-versus-2 splits. One
+is the true treatment split, one its complement, and four cut across the
+treatment assignment — these last are nulls, since no treatment difference
+exists between the groups they define.
+
+| | Real split | Null splits | Ratio |
+|---|---|---|---|
+| Male | 90 | 7, 7, 14, 14 (median 10) | **8.6x** |
+| Female | 14 | 35, 35, 39, 39 (median 37) | **0.38x** |
+
+The male response exceeds every null by a wide margin: it is specific to
+treatment. **The female response falls below every null.** Any alternative
+grouping of the same four female samples yields more differentially expressed
+genes than the correct one.
+
+Gene identity confirms this. Of the 90 male genes, 7 (8%) also appear in a null
+split, and those seven are structural and stress transcripts —
+`28SrRNA-Psi:CR40596`, `28SrRNA-Psi:CR45848`, `snRNA:7SKa`, `RNaseMRP:RNA`,
+`Hsp26`, `Hsp27`, `Rh2`. Of the 14 female genes, **9 (64%) appear in a null
+split**, including `Yp1`, `Yp2` and `Yp3` — the yolk proteins independently
+identified as ambient RNA in §3.6, together with `Arr1`, `Cp110`, `Imp`,
+`Nplp2` and `RpL39`.
+
+The female result is therefore not a smaller response than the male one. At this
+threshold and replicate number it is not distinguishable from variation between
+female samples, and the majority of its genes are identifiable as such directly.
+
+### 3.10 Cell-level results are directionally corroborated at replicate level
 
 Pseudobulk analysis (summing counts per sample, n = 2 versus 2) found no
 significant genes, as expected at this replicate number. Direction agreement
@@ -260,6 +294,27 @@ These are the claims that survive independent reanalysis, and they are the
 claims the paper's title and abstract rest on: that the *Drosophila* brain
 responds to acute cocaine in a cell-type-specific and profoundly sexually
 dimorphic manner.
+
+### The female response is not established by these data
+
+The permutation control is the most consequential result of this reanalysis.
+Fourteen differentially expressed genes in females sounds like a modest but real
+effect until it is compared with the 35 to 39 genes obtained from any incorrect
+grouping of the same four samples. A signal smaller than its own background
+cannot be attributed to the variable of interest.
+
+This does not show that female flies do not respond to cocaine. A real effect
+smaller than the between-sample variation would look identical, and with two
+replicates per arm that variation is substantial. What it shows is that **this
+design cannot resolve a female response at this threshold**, and that the
+reported female gene count therefore carries less information than its
+appearance suggests.
+
+It also explains two earlier results. The 6.43-fold pooled ratio compares a real
+male signal against a female floor rather than two responses of different
+magnitude. And no gene showed a significant sex x treatment interaction (§3.7)
+because the female arm contributes no reliable signal for the male arm to
+interact with.
 
 ### The gene-level findings are confounded in both sexes
 
