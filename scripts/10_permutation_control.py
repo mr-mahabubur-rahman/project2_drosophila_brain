@@ -130,7 +130,7 @@ def main():
     print("=" * 66)
     for sex in ["Male", "Female"]:
         d = df[df.sex == sex]
-        real = d[d.kind.str.startswith("REAL")].n_DE.iloc[0]
+        real = d[d.kind == "real"].n_DE.iloc[0]
         nulls = d[d.kind == "null"].n_DE.values
         print(f"\n{sex}:")
         print(f"  real treatment split : {real}")
@@ -152,7 +152,7 @@ def main():
     fig, axes = plt.subplots(1, 2, figsize=(9, 4), sharey=False)
     for ax, sex in zip(axes, ["Male", "Female"]):
         d = df[df.sex == sex]
-        real = d[d.kind.str.startswith("REAL")].n_DE.iloc[0]
+        real = d[d.kind == "real"].n_DE.iloc[0]
         nulls = d[d.kind == "null"].n_DE.values
         ax.scatter(np.full(len(nulls), 0.6) + np.linspace(-.08, .08, len(nulls)),
                    nulls, s=45, c="grey", zorder=3, label="null splits")
