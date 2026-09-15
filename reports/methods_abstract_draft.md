@@ -6,38 +6,42 @@
 
 Acute cocaine exposure alters gene expression across the *Drosophila* brain in a
 sexually dimorphic manner (Baker et al., *Genome Research* 2021). We reanalysed
-the underlying single-cell data (GEO: GSE152495; 8 samples, sex × treatment ×
-two replicates) with an independent Scanpy-based pipeline to test which of the
-published findings reproduce.
+the underlying single-cell data (GEO: GSE152495; eight samples, sex × treatment ×
+two replicates) with an independent Scanpy pipeline, and tested the
+differential expression results against explicit statistical controls.
 
 Quality filtering retained 86,177 cells, within 0.05% of the 86,224 reported.
-Leiden clustering at the published resolution yielded 30 clusters rather than
-36; a resolution sweep reached 36 at approximately 1.33, and the reported
-plateau in cluster count at resolution 0.8 was not observed. Twenty-four
-clusters were assigned cell types using two independent marker panels, including
-populations matching the paper's Kenyon cells, surface glia, and unannotated
-antennal/optic lobe cluster.
+Leiden clustering at the published resolution gave 30 clusters rather than 36,
+reaching 36 at approximately resolution 1.33; the reported plateau in cluster
+count at resolution 0.8 was not observed. Twenty-four clusters were assigned
+cell types from two independent marker panels.
 
 The reported male bias in transcriptional response reproduced, but its magnitude
-depended on the unit of analysis: 6.43-fold when cells of each sex were pooled,
-against 1.65-fold when 23 clusters were tested separately and summed (published
-value 2.15-fold). Female responses exceeded male in 6 of 23 clusters, including
-Kenyon cells and surface glia.
+proved strongly analysis-dependent: 6.43-fold with cells of each sex pooled,
+1.65-fold summed across clusters, and 0.97-fold counting unique genes
+(published value 2.15-fold). Excluding mitochondrial, respiratory-chain and
+ribosomal transcripts left the pooled ratio unchanged but reduced the
+cluster-level ratio to 1.13-fold. No gene showed a significant sex × treatment
+interaction in a pseudobulk model, indicating that the design supports
+dimorphism in aggregate but not for individual genes.
 
-The most significant genes in each sex tracked technical covariates rather than
-treatment. In males, mitochondrial and respiratory-chain transcripts dominated,
-and mitochondrial content differed 6.4-fold between treatment arms (median 0.373%
-versus 0.058%); oxidative phosphorylation was the top enriched pathway in three
-separate male clusters and in none in females, which showed no such difference in
-mitochondrial content. In females, the leading genes were yolk proteins present as
-ambient RNA, detected in 27.2% of cells from one cocaine replicate against 3.2–4.9%
-in controls and distributed across cell types that do not transcribe them.
+Comparing the treatment contrast against alternative groupings of the same
+samples revealed an asymmetry not visible from gene counts alone. In males the
+treatment split yielded 90 differentially expressed genes against 7 and 14 for
+two null contrasts. In females it yielded 14 against 39 and 35: fewer genes than
+any incorrect grouping of the same four samples, with 64% of them also appearing
+in a null. The largest source of variation in the female data is the replicate
+axis, which alone produced 5.6-fold more genes than the equivalent contrast in
+males.
 
-The design-level conclusions of the original study reproduce robustly. The
-gene- and pathway-level findings appear substantially confounded by technical
-variation not reported in the original analysis.
+The design-level conclusions of the original study reproduce. The female
+response, however, is not resolvable above between-sample variation in these
+data, and the reported sexual dimorphism may substantially reflect a male
+response detectable above background alongside a female response that is not.
 
-*(~290 words. Trim the third paragraph first if you need to reach 250.)*
+*(~320 words. If a limit applies, compress the third paragraph — the ratio
+series — to a single sentence; the permutation result in the fourth is the
+more important of the two.)*
 
 ---
 
