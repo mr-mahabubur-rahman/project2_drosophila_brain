@@ -11,12 +11,6 @@ results/checkpoints/
 cache/
 .scanpy_cache/
 
-# Environment
-.venv/
-__pycache__/
-*.pyc
-.ipynb_checkpoints/
-
 # Keep the folder structure visible in a clean clone
 !results/figures/.gitkeep
 !results/tables/.gitkeep
@@ -25,3 +19,37 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[codz]
+*$py.class
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Environments
+.env
+.venv/
+env/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Ruff / mypy
+.ruff_cache/
+.mypy_cache/
