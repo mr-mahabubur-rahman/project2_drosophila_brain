@@ -1,9 +1,9 @@
 sample,n_cells,median_genes,median_counts,median_pct_mt,median_pct_ribo
-Female_Cocaine_R1,10437,680.0,1190.0,0.28,6.8
-Female_Cocaine_R2,11124,1207.0,2868.0,0.25,6.3
-Female_Sucrose_R1,13072,733.0,1304.0,0.16,7.77
-Female_Sucrose_R2,9367,1080.0,2286.0,0.72,6.67
-Male_Cocaine_R1,13193,769.0,1378.0,0.32,7.77
-Male_Cocaine_R2,11033,799.0,1440.0,0.47,8.51
-Male_Sucrose_R1,9072,771.5,1347.0,0.09,9.01
-Male_Sucrose_R2,11693,807.0,1476.0,0.04,8.74
+Female_Cocaine_R1,13072,733.0,1304.0,0.16,7.77
+Female_Cocaine_R2,9367,1080.0,2286.0,0.72,6.67
+Female_Sucrose_R1,9072,771.5,1347.0,0.09,9.01
+Female_Sucrose_R2,11693,807.0,1476.0,0.04,8.74
+Male_Cocaine_R1,10437,680.0,1190.0,0.28,6.8
+Male_Cocaine_R2,11124,1207.0,2868.0,0.25,6.3
+Male_Sucrose_R1,13193,769.0,1378.0,0.32,7.77
+Male_Sucrose_R2,11033,799.0,1440.0,0.47,8.51

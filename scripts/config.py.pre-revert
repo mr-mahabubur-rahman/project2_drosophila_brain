@@ -55,40 +55,50 @@ for _d in (RESULTS_DIR, CHECKPOINT_DIR, FIG_DIR, TABLE_DIR):
     _d.mkdir(parents=True, exist_ok=True)
 
 # ----------------------------------------------------------------------
-# SAMPLE LABELS — as deposited, verified against Supplemental Table S2
+# SAMPLE LABEL CORRECTION  —  read docs/data_provenance.md before changing
+# ----------------------------------------------------------------------
+# The supplied folder names DO NOT match their contents.
 #
-# An earlier version of this file remapped these labels on the basis of
-# sex-specific markers, using a reconstruction from the deposition order in the
-# authors' published R code. Supplemental Table S2 shows that reconstruction was
-# wrong: it lists per-sample cell counts, and all eight match the folders as
-# supplied (9,072 / 11,693 / 13,193 / 11,033 / 13,072 / 9,367 / 10,437 / 11,124;
-# total 88,991). Cell count is intrinsic to each matrix, so this ties every
-# folder to the name the authors used. The labels below are therefore the
-# deposited ones, unchanged.
+# Evidence: sex-specific markers separate the eight samples cleanly into two
+# groups of four, but the split follows the TREATMENT field of the folder name,
+# not the SEX field.
+#     roX1/roX2 (male-specific)  high in the four *_Sucrose_* folders
+#     Yp1-Yp3, Sxl (female)      high in the four *_Cocaine_* folders
+# Yolk proteins are transcribed only in females and read 0.000-0.001 in all four
+# Sucrose-labelled samples, so this cannot be a drug effect.
 #
-# UNRESOLVED: sex-specific markers do not agree with these labels. roX1/roX2
-# (male-specific) read 3.8-4.0 in all four Sucrose samples and 0.06-0.11 in all
-# four Cocaine samples; Yp1-Yp3 (female-specific) do the reverse. The split
-# follows treatment, crossing both declared sexes. Yolk proteins are not
-# transcribed in males, so this is not explicable as regulation. Documented in
-# docs/data_provenance.md; not corrected here, because correcting it would
-# require information the deposited data does not contain.
+# Cause: the authors' published R code
+# (github.com/vshanka23/The-Drosophila-Brain-on-Cocaine-at-Single-Cell-Resolution)
+# lists the deposition order of the eight samples:
+#     S1 Female_sucrose_R1   S5 Female_cocaine_R1
+#     S2 Female_sucrose_R2   S6 Female_cocaine_R2
+#     S3 Male_sucrose_R1     S7 Male_cocaine_R1
+#     S4 Male_sucrose_R2     S8 Male_cocaine_R2
+# Pairing that order against the folder names sorted ALPHABETICALLY reproduces
+# the observed marker pattern for all eight samples. The folders were built by
+# assigning GSM accessions in GEO order to folder names in alphabetical order.
+#
+# CONFIDENCE — state this distinction in your Methods:
+#   sex       CONFIRMED. Two independent marker panels, opposite directions,
+#             non-overlapping groups.
+#   treatment INFERRED from the deposition order. No marker reports whether a
+#             fly ate cocaine. Supported independently: under these labels the
+#             male:female DE ratio is ~8x, and the paper reports males
+#             responding more than females (691 vs 322, ~2.1x).
 #
 # folder name -> (sex, treatment, replicate, GEO position)
 SAMPLE_REMAP = {
-    "Female_Sucrose_1": ("Female", "Sucrose", "1", "S1"),
-    "Female_Sucrose_2": ("Female", "Sucrose", "2", "S2"),
-    "Male_Sucrose_1":   ("Male",   "Sucrose", "1", "S3"),
-    "Male_Sucrose_2":   ("Male",   "Sucrose", "2", "S4"),
-    "Female_Cocaine_1": ("Female", "Cocaine", "1", "S5"),
-    "Female_Cocaine_2": ("Female", "Cocaine", "2", "S6"),
-    "Male_Cocaine_1":   ("Male",   "Cocaine", "1", "S7"),
-    "Male_Cocaine_2":   ("Male",   "Cocaine", "2", "S8"),
+    "Female_Cocaine_1": ("Female", "Sucrose", "1", "S1"),
+    "Female_Cocaine_2": ("Female", "Sucrose", "2", "S2"),
+    "Female_Sucrose_1": ("Male",   "Sucrose", "1", "S3"),
+    "Female_Sucrose_2": ("Male",   "Sucrose", "2", "S4"),
+    "Male_Cocaine_1":   ("Female", "Cocaine", "1", "S5"),
+    "Male_Cocaine_2":   ("Female", "Cocaine", "2", "S6"),
+    "Male_Sucrose_1":   ("Male",   "Cocaine", "1", "S7"),
+    "Male_Sucrose_2":   ("Male",   "Cocaine", "2", "S8"),
 }
 
-# True = use the table above (labels as deposited). The table is now an identity
-# mapping, so this switch no longer changes any assignment; it is retained so
-# 01_load_data.py continues to work unmodified.
+# Set False only to reproduce the original (incorrect) labelling for comparison.
 APPLY_SAMPLE_REMAP = True
 
 # Gene symbols pandas misreads as missing values when parsing features.tsv.

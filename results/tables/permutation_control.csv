@@ -1,7 +1,7 @@
 sex,kind,axis,group_A,n_DE
 Male,real,treatment,Cocaine_R1 + Cocaine_R2,90
-Male,null,replicate,Cocaine_R1 + Sucrose_R1,7
-Male,null,diagonal,Cocaine_R1 + Sucrose_R2,14
-Female,real,treatment,Cocaine_R1 + Cocaine_R2,14
-Female,null,replicate,Cocaine_R1 + Sucrose_R1,39
-Female,null,diagonal,Cocaine_R1 + Sucrose_R2,35
+Male,null,replicate,Cocaine_R1 + Sucrose_R1,16
+Male,null,diagonal,Cocaine_R1 + Sucrose_R2,44
+Female,real,treatment,Cocaine_R1 + Cocaine_R2,152
+Female,null,replicate,Cocaine_R1 + Sucrose_R1,19
+Female,null,diagonal,Cocaine_R1 + Sucrose_R2,33
