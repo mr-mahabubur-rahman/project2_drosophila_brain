@@ -2,11 +2,22 @@
 """
 make_graphical_abstract.py — graphical abstract and analysis flowchart.
 
-Both are drawn rather than screenshotted so they can be regenerated if numbers
-change. Colour is used consistently across the two figures and the rest of the
-report: red for the treatment/real contrast, blue for nulls and controls, grey
-for neutral material, green for findings that reproduce and amber for those
-that do not survive testing.
+REWRITTEN after the sample labels were reverted to the deposited ones.
+
+The earlier version of this script encoded a conclusion that no longer holds:
+that the folder labels were scrambled, that the female response fell below its
+own background, and that a male-specific mitochondrial confound drove the
+result. Supplemental Table S2 showed the labels were correct as deposited, and
+re-analysis under them gives different numbers and a different finding.
+
+The current finding is that sex-specific markers do not agree with the deposited
+sex labels, so neither treatment contrast can be separated from a sex contrast.
+Both figures now carry that.
+
+Numbers here are hard-coded. If the analysis is re-run and they change, edit
+this file rather than the images.
+
+Run:  python tools/make_graphical_abstract.py
 """
 
 import matplotlib
@@ -29,11 +40,11 @@ def box(ax, x, y, w, h, text, fc="white", ec=DARK, lw=1.0, fs=8.5,
     ax.add_patch(FancyBboxPatch(
         (x, y), w, h, boxstyle=f"round,pad={pad},rounding_size={r}",
         facecolor=fc, edgecolor=ec, linewidth=lw, zorder=2))
-    ax.text(x + w / 2 if align == "center" else x + 0.012,
-            y + h / 2, text,
-            ha=align, va="center", fontsize=fs,
-            fontweight="bold" if bold else "normal",
-            color=tc, zorder=3, linespacing=1.45)
+    if text:
+        ax.text(x + w / 2 if align == "center" else x + 0.012,
+                y + h / 2, text, ha=align, va="center", fontsize=fs,
+                fontweight="bold" if bold else "normal",
+                color=tc, zorder=3, linespacing=1.45)
 
 
 def arrow(ax, x1, y1, x2, y2, color=GREY, lw=1.3, style="-|>", ls="-"):
@@ -47,117 +58,142 @@ def arrow(ax, x1, y1, x2, y2, color=GREY, lw=1.3, style="-|>", ls="-"):
 # 1. GRAPHICAL ABSTRACT
 # ======================================================================
 def graphical_abstract(path):
-    fig, ax = plt.subplots(figsize=(11.5, 6.6))
+    fig, ax = plt.subplots(figsize=(11.5, 5.9))
     ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis("off")
 
-    ax.text(0.5, 0.968,
+    ax.text(0.5, 0.970,
             "Independent reanalysis of the cocaine-exposed $\\it{Drosophila}$ brain",
             ha="center", fontsize=15, fontweight="bold", color=DARK)
-    ax.text(0.5, 0.932,
-            "Which published findings survive explicit statistical controls?",
+    ax.text(0.5, 0.938,
+            "The atlas reproduces. The sample labels do not agree with the data.",
             ha="center", fontsize=10.5, color=GREY, style="italic")
 
-    TOP, BH = 0.635, 0.245          # box bottom and height
+    TOP, BH = 0.688, 0.222
 
     # ---------------- input ----------------
     box(ax, 0.020, TOP, 0.205, BH, "", fc=LIGHT, ec=GREY, lw=0.8)
-    ax.text(0.1225, TOP + 0.212, "DATA", ha="center", fontsize=8.5,
+    ax.text(0.1225, TOP + 0.190, "DATA", ha="center", fontsize=8.5,
             fontweight="bold", color=GREY)
-    ax.text(0.1225, TOP + 0.176, "GEO: GSE152495", ha="center", fontsize=10,
+    ax.text(0.1225, TOP + 0.154, "GEO: GSE152495", ha="center", fontsize=10,
             fontweight="bold", color=DARK)
-    ax.text(0.1225, TOP + 0.140, "8 samples, 88,991 cells", ha="center",
+    ax.text(0.1225, TOP + 0.120, "8 samples, 88,991 cells", ha="center",
             fontsize=8.4, color=DARK)
     for i, (lbl, col) in enumerate([("\u2640 Sucrose", BLUE), ("\u2640 Cocaine", RED),
                                     ("\u2642 Sucrose", BLUE), ("\u2642 Cocaine", RED)]):
         x = 0.035 + (i % 2) * 0.094
-        y = TOP + 0.085 - (i // 2) * 0.034
-        ax.add_patch(Rectangle((x, y), 0.086, 0.026, facecolor=col,
+        y = TOP + 0.068 - (i // 2) * 0.032
+        ax.add_patch(Rectangle((x, y), 0.086, 0.025, facecolor=col,
                                alpha=0.22, edgecolor=col, linewidth=0.7))
-        ax.text(x + 0.043, y + 0.013, f"{lbl} \u00d72", ha="center", va="center",
+        ax.text(x + 0.043, y + 0.0125, f"{lbl} \u00d72", ha="center", va="center",
                 fontsize=7.2, color=DARK)
 
     arrow(ax, 0.233, TOP + BH / 2, 0.278, TOP + BH / 2, color=GREY, lw=1.8)
 
     # ---------------- pipeline ----------------
     box(ax, 0.288, TOP, 0.215, BH, "", fc=LIGHT, ec=GREY, lw=0.8)
-    ax.text(0.3955, TOP + 0.212, "PIPELINE", ha="center", fontsize=8.5,
+    ax.text(0.3955, TOP + 0.190, "PIPELINE", ha="center", fontsize=8.5,
             fontweight="bold", color=GREY)
-    ax.text(0.3955, TOP + 0.176, "Scanpy \u00b7 Leiden \u00b7 Wilcoxon", ha="center",
+    ax.text(0.3955, TOP + 0.154, "Scanpy \u00b7 Leiden \u00b7 Wilcoxon", ha="center",
             fontsize=9.6, fontweight="bold", color=DARK)
     for i, line in enumerate([
             "3 data errors corrected",
             "86,177 cells retained",
             "(paper 86,224 \u2014 0.05% apart)",
             "30 clusters \u00b7 24 annotated"]):
-        ax.text(0.3955, TOP + 0.132 - i * 0.031, line, ha="center",
+        ax.text(0.3955, TOP + 0.116 - i * 0.029, line, ha="center",
                 fontsize=8.2, color=DARK)
 
     arrow(ax, 0.511, TOP + BH / 2, 0.556, TOP + BH / 2, color=GREY, lw=1.8)
 
     # ---------------- outcomes ----------------
-    box(ax, 0.566, TOP + 0.136, 0.414, 0.109, "", fc="#EAF3EE", ec=GREEN, lw=1.2)
-    ax.text(0.583, TOP + 0.218, "REPRODUCES", fontsize=8.6, fontweight="bold",
-            color=GREEN, va="center")
-    for i, line in enumerate(["cell count \u00b7 atlas structure \u00b7 no batch effect",
-                              "near-zero overlap between sexes \u00b7 male response"]):
-        ax.text(0.583, TOP + 0.186 - i * 0.028, line, fontsize=8.3,
+    box(ax, 0.566, TOP + 0.122, 0.414, 0.100, "", fc="#EAF3EE", ec=GREEN, lw=1.2)
+    ax.text(0.583, TOP + 0.196, "THE ATLAS REPRODUCES", fontsize=8.6,
+            fontweight="bold", color=GREEN, va="center")
+    for i, line in enumerate(["cell count to 0.05% \u00b7 30 clusters \u00b7 major cell types",
+                              "no batch effect \u00b7 Kenyon cells, surface glia recovered"]):
+        ax.text(0.583, TOP + 0.166 - i * 0.027, line, fontsize=8.2,
                 color=DARK, va="center")
 
-    box(ax, 0.566, TOP, 0.414, 0.109, "", fc="#FBF0E6", ec=AMBER, lw=1.2)
-    ax.text(0.583, TOP + 0.082, "DOES NOT SURVIVE TESTING", fontsize=8.6,
+    box(ax, 0.566, TOP, 0.414, 0.100, "", fc="#FBF0E6", ec=AMBER, lw=1.2)
+    ax.text(0.583, TOP + 0.074, "THE LABELS DO NOT", fontsize=8.6,
             fontweight="bold", color=AMBER, va="center")
-    for i, line in enumerate(["female response \u2014 below its own background",
-                              "male:female ratio \u2014 0.97\u00d7 to 6.43\u00d7 by metric"]):
-        ax.text(0.583, TOP + 0.050 - i * 0.028, line, fontsize=8.3,
+    for i, line in enumerate(["sex markers split the samples by TREATMENT,",
+                              "crossing both declared sexes"]):
+        ax.text(0.583, TOP + 0.044 - i * 0.027, line, fontsize=8.2,
                 color=DARK, va="center")
 
-    # ---------------- key result panel ----------------
-    ax.plot([0.020, 0.980], [0.585, 0.585], color="#DDDDDD", lw=1)
-    ax.text(0.5, 0.548, "KEY RESULT \u2014 treatment effect against its own background",
+    # ---------------- key result ----------------
+    ax.plot([0.020, 0.980], [0.638, 0.638], color="#DDDDDD", lw=1)
+    ax.text(0.5, 0.602, "KEY RESULT \u2014 sex markers do not match the sample labels",
             ha="center", fontsize=10.5, fontweight="bold", color=DARK)
-    ax.text(0.5, 0.516,
-            "Four samples per sex permit two null contrasts besides the true treatment split",
+    ax.text(0.5, 0.572,
+            "Ranges across the four samples in each group. No sample bridges the gap.",
             ha="center", fontsize=8.4, color=GREY, style="italic")
 
-    BASE, TOPBAR = 0.245, 0.462       # plotting area for bars
-    for pi, (sex, vals, note) in enumerate([
-            ("Male", [90, 7, 14], "treatment dominates"),
-            ("Female", [14, 39, 35], "replicate axis dominates")]):
-        x0 = 0.075 + pi * 0.48
-        w = 0.36
-        ax.text(x0 + w / 2, TOPBAR + 0.026, sex, ha="center", fontsize=11,
-                fontweight="bold", color=DARK)
-        ax.text(x0 + w / 2, TOPBAR + 0.002, note, ha="center", fontsize=8.2,
-                color=GREY, style="italic")
-        vmax, bw = 100.0, 0.075
-        for bi, (v, c, lab) in enumerate(zip(
-                vals, [RED, BLUE, GREY],
-                ["treatment\n(real)", "replicate\n(null)", "diagonal\n(null)"])):
-            bx = x0 + 0.045 + bi * 0.104
-            bh = (v / vmax) * (TOPBAR - BASE - 0.038)
-            ax.add_patch(Rectangle((bx, BASE), bw, bh, facecolor=c,
-                                   edgecolor="none", zorder=2))
-            ax.text(bx + bw / 2, BASE + bh + 0.013, str(v), ha="center",
-                    fontsize=10, fontweight="bold", color=DARK)
-            ax.text(bx + bw / 2, BASE - 0.020, lab, ha="center", fontsize=7.6,
-                    color=DARK, linespacing=1.5, va="top")
-        ax.plot([x0 + 0.032, x0 + w], [BASE, BASE], color=DARK, lw=1.1)
-        ax.text(x0 + 0.020, BASE + (TOPBAR - BASE - 0.038) / 2, "DE genes",
-                rotation=90, va="center", ha="center", fontsize=8.2, color=GREY)
+    rows = [
+        ("roX1", "male-specific", "3.85 \u2013 3.97", "0.06 \u2013 0.12"),
+        ("roX2", "male-specific", "2.16 \u2013 2.40", "0.01 \u2013 0.02"),
+        ("Yp1", "female-specific", "0.000 \u2013 0.001", "0.07 \u2013 0.26"),
+        ("Yp3", "female-specific", "0.006 \u2013 0.010", "0.07 \u2013 0.43"),
+    ]
+    ytab = 0.520
+    rh = 0.038
+    x0, wg, wn, wv = 0.175, 0.115, 0.135, 0.180
 
-    # ---------------- bottom conclusion ----------------
-    box(ax, 0.020, 0.016, 0.960, 0.098, "", fc="#F7F7F7", ec=GREY, lw=0.9)
-    ax.text(0.5, 0.086,
-            "In males the treatment effect exceeds both nulls by 6\u201313\u00d7.",
-            ha="center", fontsize=8.8, color=DARK)
-    ax.text(0.5, 0.060,
-            "In females both nulls exceed it, and 64% of the 14 female genes also "
-            "appear in a null contrast.",
-            ha="center", fontsize=8.8, color=DARK)
-    ax.text(0.5, 0.031,
-            "Design-level conclusions reproduce; the female response is not "
-            "resolvable above between-sample variation.",
-            ha="center", fontsize=9.2, fontweight="bold", color=DARK)
+    ax.text(x0 + wg / 2, ytab + 0.020, "marker", ha="center", fontsize=8.4,
+            fontweight="bold", color=GREY)
+    ax.text(x0 + wg + wn / 2, ytab + 0.020, "specificity", ha="center",
+            fontsize=8.4, fontweight="bold", color=GREY)
+    ax.text(x0 + wg + wn + wv / 2, ytab + 0.020, "4 Sucrose samples",
+            ha="center", fontsize=8.6, fontweight="bold", color=BLUE)
+    ax.text(x0 + wg + wn + wv * 1.5, ytab + 0.020, "4 Cocaine samples",
+            ha="center", fontsize=8.6, fontweight="bold", color=RED)
+
+    for i, (g, spec, suc, coc) in enumerate(rows):
+        y = ytab - i * rh
+        if i % 2 == 0:
+            ax.add_patch(Rectangle((x0 - 0.01, y - rh * 0.42), wg + wn + wv * 2 + 0.02,
+                                   rh * 0.84, facecolor="#F7F7F7", edgecolor="none"))
+        ax.text(x0 + wg / 2, y, g, ha="center", va="center", fontsize=9,
+                fontweight="bold", color=DARK, style="italic")
+        ax.text(x0 + wg + wn / 2, y, spec, ha="center", va="center",
+                fontsize=7.8, color=GREY)
+        ax.text(x0 + wg + wn + wv / 2, y, suc, ha="center", va="center",
+                fontsize=9, color=BLUE, fontweight="bold")
+        ax.text(x0 + wg + wn + wv * 1.5, y, coc, ha="center", va="center",
+                fontsize=9, color=RED, fontweight="bold")
+
+    ax.text(0.5, ytab - 4 * rh - 0.012,
+            "Yolk proteins are not transcribed in males. The highest value in the "
+            "dataset is in a sample labelled male.",
+            ha="center", fontsize=8.2, color=DARK, style="italic")
+
+    # ---------------- consequence ----------------
+    box(ax, 0.020, 0.212, 0.960, 0.098, "", fc="#FBF0E6", ec=AMBER, lw=1.0)
+    ax.text(0.5, 0.284, "CONSEQUENCE", ha="center", fontsize=8.5,
+            fontweight="bold", color=AMBER)
+    ax.text(0.5, 0.257,
+            "Comparing cocaine with sucrose within each declared sex returns the sex "
+            "markers among the most significant genes in BOTH contrasts",
+            ha="center", fontsize=8.6, color=DARK)
+    ax.text(0.5, 0.230,
+            "roX1 and roX2 at approximately \u22129.5 log$_2$FC, adjusted $p$ below "
+            "machine precision",
+            ha="center", fontsize=8.6, color=DARK)
+
+    # ---------------- verification + conclusion ----------------
+    box(ax, 0.020, 0.088, 0.960, 0.108, "", fc="#F7F7F7", ec=GREY, lw=0.9)
+    ax.text(0.5, 0.172,
+            "Sample identity verified three ways, all in agreement: "
+            "Supplemental Table S2 cell counts (8/8), GEO titles, authors' code",
+            ha="center", fontsize=8.4, color=DARK)
+    ax.text(0.5, 0.146,
+            "The discrepancy did not arise during analysis or deposition.",
+            ha="center", fontsize=8.4, color=DARK)
+    ax.text(0.5, 0.112,
+            "No differential expression result from these data can presently be "
+            "attributed to cocaine. Referred to the original authors.",
+            ha="center", fontsize=9.0, fontweight="bold", color=DARK)
 
     fig.savefig(path, dpi=300, bbox_inches="tight", facecolor="white")
     plt.close(fig)
@@ -168,26 +204,27 @@ def graphical_abstract(path):
 # 2. FLOWCHART
 # ======================================================================
 def flowchart(path):
-    fig, ax = plt.subplots(figsize=(8.6, 13.0))
+    fig, ax = plt.subplots(figsize=(8.6, 14.2))
     ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis("off")
 
     ax.text(0.5, 0.986, "Analysis workflow", ha="center", fontsize=15,
             fontweight="bold", color=DARK)
-    ax.text(0.5, 0.968,
-            "Bracketed numbers are the pipeline scripts",
+    ax.text(0.5, 0.968, "Bracketed numbers are the pipeline scripts",
             ha="center", fontsize=8.2, color=GREY, style="italic")
 
-    CX, W = 0.50, 0.66
-    GAP = 0.016
-    y = 0.952                       # running TOP edge
+    CX, W, GAP = 0.50, 0.66, 0.014
+    y = 0.955
 
     steps = [
         ("GSE152495 \u2014 8 CellRanger matrices",
          ["88,991 cells \u00d7 17,481 genes"], LIGHT, GREY),
         ("Pre-analysis corrections  [tools/]",
-         ["delimiter \u00b7 gene named 'nan' \u00b7 scrambled sample labels",
-          "sex confirmed by markers; treatment inferred from GEO order"],
+         ["space-delimited features.tsv \u00b7 gene named 'nan'",
+          "five vertebrate ortholog symbols (trh = trachealess)"],
          "#FBF0E6", AMBER),
+        ("Sample identity verified  [tools/]",
+         ["Table S2 cell counts 8/8 \u00b7 GEO titles \u00b7 authors' code",
+          "labels used AS DEPOSITED"], "#EAF3EE", GREEN),
         ("Load and merge  [01]",
          ["metadata attached to every cell"], "white", GREY),
         ("Quality control  [02]",
@@ -199,9 +236,9 @@ def flowchart(path):
         ("Cell-type annotation  [04]",
          ["two independent marker panels",
           "24 of 30 assigned; 1 cluster excluded"], "white", GREY),
-        ("Differential expression  [05]",
-         ["Wilcoxon, cocaine vs sucrose",
-          "pooled \u00b7 per cluster \u00b7 sex overlap"], "white", GREY),
+        ("Sex-marker check  [tools/]",
+         ["roX1/roX2 and Yp1\u2013Yp3 vs declared labels",
+          "MARKERS SPLIT BY TREATMENT, NOT SEX"], "#FBF0E6", AMBER),
     ]
 
     centres = []
@@ -222,42 +259,40 @@ def flowchart(path):
     # ---- controls ----
     y_ctrl_top = y - 0.006
     ax.plot([0.02, 0.98], [y_ctrl_top, y_ctrl_top], color="#DDDDDD", lw=1)
-    ax.text(0.5, y_ctrl_top - 0.026, "STATISTICAL CONTROLS", ha="center",
-            fontsize=10, fontweight="bold", color=BLUE)
+    ax.text(0.5, y_ctrl_top - 0.026, "DIFFERENTIAL EXPRESSION AND CONTROLS",
+            ha="center", fontsize=9.6, fontweight="bold", color=BLUE)
     ax.text(0.5, y_ctrl_top - 0.045,
-            "each answers a question the gene count alone cannot",
+            "reported for completeness; each contrast is confounded with sex",
             ha="center", fontsize=7.9, color=GREY, style="italic")
     arrow(ax, CX, centres[-1][1], CX, y_ctrl_top, color=GREY, lw=1.5)
 
     controls = [
+        ("Differential expression  [05]", "Cocaine vs sucrose within\neach declared sex",
+         "90 and 152 genes \u2014 but\nsex markers top both lists", False, "Fig 3C"),
         ("Pseudobulk  [05b]", "Do cell-level results hold\nat replicate level?",
-         "100% direction agreement\n\u03c1 = 0.78 (male)", True, "Fig 17"),
+         "100% direction agreement\n\u03c1 = 0.94, 0.96", True, "Fig 17"),
         ("Interaction model  [07]", "Does any gene respond\ndifferently by sex?",
          "0 genes at FDR < 0.05\n(4 residual df)", False, "Fig 14"),
-        ("Gene-class exclusion  [08A]", "Do mitochondrial genes\ndrive the male bias?",
-         "No \u2014 ratio unchanged\n(6.43\u00d7 \u2192 6.83\u00d7)", False, "Fig 11"),
         ("Cluster-size matching  [08B]", "Is the ranking power\nor biology?",
-         "Kenyon 1st \u2192 7th;\nsurface glia stable at 3rd", False, "Fig 15"),
+         "\u03c1 = 0.63 size vs DE count;\nranking shifts when matched", False, "Fig 15"),
         ("Permutation control  [10]", "Is the effect larger than\nits own background?",
-         "Male 90 vs 7 / 14  \u2713\nFemale 14 vs 39 / 35  \u2717", False, "Fig 16"),
+         "Male 90 vs 16 / 44\nFemale 152 vs 19 / 33", True, "Fig 16"),
     ]
 
-    cy = y_ctrl_top - 0.058
-    CH = 0.046
-    CGAP = 0.011
+    cy = y_ctrl_top - 0.054
+    CH, CGAP = 0.038, 0.008
     for name, question, result, good, figref in controls:
-        top = cy
-        bot = cy - CH
+        top, bot = cy, cy - CH
         box(ax, 0.045, bot, 0.345, CH, "", fc="#EEF2F8", ec=BLUE, lw=0.9)
         ax.text(0.058, top - 0.012, name, fontsize=8.3, fontweight="bold",
                 color=BLUE, va="center")
-        for i, ln in enumerate(question.split("\\n")):
-            ax.text(0.058, top - 0.027 - i * 0.014, ln, fontsize=7.2,
+        for i, ln in enumerate(question.split("\n")):
+            ax.text(0.058, top - 0.025 - i * 0.0125, ln, fontsize=7.0,
                     color=DARK, va="center")
         fcol = "#EAF3EE" if good else "#FBF0E6"
         ecol = GREEN if good else AMBER
         box(ax, 0.455, bot, 0.345, CH, "", fc=fcol, ec=ecol, lw=0.9)
-        for i, ln in enumerate(result.split("\\n")):
+        for i, ln in enumerate(result.split("\n")):
             ax.text(0.468, top - 0.017 - i * 0.016, ln, fontsize=7.4,
                     color=DARK, va="center")
         arrow(ax, 0.393, top - CH / 2, 0.452, top - CH / 2, color=GREY, lw=1.1)
@@ -266,18 +301,20 @@ def flowchart(path):
         cy = bot - CGAP
 
     # ---- conclusion ----
-    ctop = cy - 0.010
-    CHH = 0.066
+    ctop = cy - 0.006
+    CHH = 0.070
     box(ax, 0.045, ctop - CHH, 0.755, CHH, "", fc="#F7F7F7", ec=DARK, lw=1.1)
-    ax.text(0.4225, ctop - 0.016, "CONCLUSION", ha="center", fontsize=8.4,
+    ax.text(0.4225, ctop - 0.014, "CONCLUSION", ha="center", fontsize=8.4,
             fontweight="bold", color=DARK)
-    ax.text(0.4225, ctop - 0.035,
-            "Design-level findings reproduce. Gene-level findings are analysis-dependent,",
-            ha="center", fontsize=8.1, color=DARK)
-    ax.text(0.4225, ctop - 0.052,
-            "and the female response is not resolvable above between-sample variation.",
-            ha="center", fontsize=8.1, color=DARK)
-    arrow(ax, 0.4225, cy + CGAP - CH - 0.001, 0.4225, ctop, color=GREY, lw=1.4)
+    ax.text(0.4225, ctop - 0.032,
+            "The atlas reproduces: 86,177 cells, 30 clusters, major cell types recovered.",
+            ha="center", fontsize=8.0, color=DARK)
+    ax.text(0.4225, ctop - 0.047,
+            "Sex markers do not agree with the deposited labels, so neither treatment",
+            ha="center", fontsize=8.0, color=DARK)
+    ax.text(0.4225, ctop - 0.062,
+            "contrast can be separated from a sex contrast. Referred to the authors.",
+            ha="center", fontsize=8.0, color=DARK)
 
     fig.savefig(path, dpi=300, bbox_inches="tight", facecolor="white")
     plt.close(fig)
