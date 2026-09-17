@@ -1,185 +1,287 @@
-# Data provenance
+# Data provenance — GSE152495
 
-Record of the data's origin and of three corrections applied before analysis.
-All three were silent failures: none produced an obviously wrong result, and
-two would have propagated invisibly into the final report.
+Record of where the data came from, what was wrong with it, what was corrected,
+and what could not be resolved. Written so that anyone re-running this analysis
+can verify each step independently.
+
+**Status:** the sample labelling discrepancy described in §4 is **unresolved** and
+has been referred to the original authors. Until it is resolved, no differential
+expression result from this dataset should be interpreted as a cocaine effect.
 
 ---
 
 ## 1. Source
 
-Count matrices supplied pre-processed by the course instructor, in eight folders
-named `<Sex>_<Treatment>_<Replicate>`. Total 323 MB, CellRanger v3 format
-(`features.tsv.gz`, not the older `genes.tsv.gz`).
+| | |
+|---|---|
+| Accession | [GSE152495](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE152495) |
+| Publication | Baker BM, Mokashi SS, Shankar V, Hatfield JS, Hannah RC, Mackay TFC, Anholt RRH (2021) *Genome Research* 31:1927–1937. [doi:10.1101/gr.268037.120](https://doi.org/10.1101/gr.268037.120) |
+| Design | 8 samples — sex (F/M) × treatment (cocaine/sucrose) × 2 biological replicates |
+| Platform | 10x Genomics Chromium; CellRanger v3.1; *D. melanogaster* Release 6 |
+| Obtained | Pre-processed CellRanger output directories (barcodes / features / matrix) |
 
-Upstream: **GEO accession GSE152495**, Baker et al. 2021, *Genome Research*
-31:1927–1937. Aligned by the original authors with CellRanger v3.1 against
-*D. melanogaster* Release 6 (GCA_000001215.4), expected cell count 5000.
-
-Merged dataset before QC: **88,991 cells × 17,481 genes**, identical gene count
-across all eight samples.
-
-The data is not committed to this repository — 323 MB, not ours to redistribute,
-and GEO is canonical. `tools/download_data.sh` and `tools/organize_data.sh` are
-retained so the dataset can be rebuilt from GEO by anyone without the
-instructor's folder.
+Count matrices are not redistributed in this repository. `tools/download_data.sh`
+and `tools/organize_data.sh` rebuild `data/` from GEO.
 
 ---
 
-## 2. Correction: features.tsv.gz delimiter
+## 2. Corrections applied before analysis
 
-**Symptom.** `sc.read_10x_mtx` failed with `KeyError: 1`.
+Three problems were found in the supplied files. Each would have propagated
+silently; none caused the pipeline to fail.
 
-**Diagnosis.**
+### 2.1 Space-delimited `features.tsv.gz`
 
-```
-zcat data/Female_Cocaine_1/features.tsv.gz | head -1 | awk -F'\t' '{print NF}'
--> 1        (should be 3)
-```
+All eight `features.tsv.gz` files were space- rather than tab-delimited. The
+CellRanger specification that `scanpy.read_10x_mtx` parses expects tabs, so all
+three fields collapsed into a single column and gene-symbol assignment failed.
 
-The files are space-delimited. `read_10x_mtx` parses them with `sep="\t"` per
-the CellRanger specification, so all three fields landed in column 0 and the
-gene-symbol lookup `genes[1]` failed.
-
-**Fix.** `tools/fix_features_separator.py --apply` converted all eight files to
-tab-delimited, splitting on whitespace with `maxsplit=2` so the third field
-("Gene Expression", which itself contains a space) stays intact. 17,481 lines
-per file. Field content unchanged; only the delimiter. Originals preserved in
+**Fix:** `tools/fix_features_separator.py --apply` converts the delimiter with
+field content unchanged (17,481 lines per file). Originals are preserved in
 `data/<sample>/original/`.
 
----
+### 2.2 Gene `nan` parsed as a missing value
 
-## 3. Correction: gene symbol lost to NA parsing
+*nanchung* (Dmel_CG5842, FlyBase symbol `nan`) is one of pandas' default
+missing-value strings. On read it became `NaN`, leaving one gene unnamed and
+preventing HDF5 serialisation of the AnnData object.
 
-**Symptom.** `adata.write()` failed with
-`TypeError: Can't implicitly convert non-string objects to strings` on the `var`
-index.
+**Fix:** renamed to `CG5842` in `config.GENE_NAME_NA_FIXES`. The identifier
+survives CSV round-trips, unlike `nan`.
 
-**Diagnosis.** Exactly one gene had a `NaN` name. Reading `features.tsv.gz` with
-`keep_default_na=False` identified two candidate symbols:
+*narrow abdomen* (`na`, Dmel_CG1517) is unaffected — lowercase `na` is not in the
+default list.
 
-| gene_id | symbol |
-|---|---|
-| Dmel_CG1517 | `na` (narrow abdomen) |
-| Dmel_CG5842 | `nan` (nanchung) |
+### 2.3 Vertebrate ortholog names in the reference
 
-Pandas' default NA list contains `nan` but not lowercase `na`, so nanchung —
-a TRPV channel involved in mechanosensation — became a missing value while
-narrow abdomen survived as text.
+The CellRanger reference used for this dataset substitutes vertebrate ortholog
+names for five fly symbols. Resolved by gene ID against FlyBase (Thurmond et al.
+2019):
 
-**Fix.** Renamed to `CG5842` via `config.GENE_NAME_NA_FIXES`. The FlyBase symbol
-is `nan`, but restoring that literal string would reintroduce the same bug at
-every CSV round-trip, where a gene named `nan` is indistinguishable from a
-missing value. `CG5842` is a valid identifier for the same gene and cannot be
-misparsed. `na` is unaffected and retains its symbol.
-
-**Why it mattered.** An unnamed gene never matches a marker lookup and would
-appear as a blank in any results table.
-
----
-
-## 4. Correction: scrambled sample labels
-
-The most consequential of the three.
-
-**Symptom.** `tools/verify_sample_mapping.py` reported UNCLEAR: `roX1`/`roX2`
-separated the samples into two clean groups of four, but the split followed the
-**treatment** field of the folder name, not the **sex** field.
-
-**Diagnosis.** `tools/diagnose_sample_labels.py` tested two independent panels:
-
-| Panel | Grouped by sex label | Grouped by treatment label |
+| Reference symbol | Actual fly gene | Gene ID |
 |---|---|---|
-| Male-biased (roX1, roX2, MSL complex) | 1.0×, overlapping | **10.6×, non-overlapping** |
-| Female-biased (Sxl, Yp1–Yp3, tra) | 1.2×, overlapping | **2.1×, non-overlapping** |
+| `VGlut1` | VGlut | CG9887 |
+| `Adcy1` | *rut* (rutabaga) | CG9533 |
+| `Pde4` | *dnc* (dunce) | CG32498 |
+| `Trhn` | Trh (tryptophan hydroxylase) | CG9122 |
+| `Tret1` | Tret1-1 | CG30035 |
 
-Both panels tracked the treatment field, in opposite directions. The decisive
-observation is the yolk proteins: `Yp1`–`Yp3` read 0.000–0.001 in all four
-Sucrose-labelled samples and 0.028–0.422 in all four Cocaine-labelled ones.
-Yolk proteins are transcribed only in females; no drug induces them in males.
+**One of these is a trap.** `trh` in lowercase is **Dmel_CG42865,
+*trachealess*** — a tracheal transcription factor unrelated to serotonin
+synthesis. A case-insensitive marker match returns *trachealess* and would label
+a cluster serotonergic on the strength of a tracheal gene.
 
-**Cause.** The authors' published analysis code
-(github.com/vshanka23/The-Drosophila-Brain-on-Cocaine-at-Single-Cell-Resolution)
-lists the deposition order of the eight samples: S1–S2 female sucrose,
-S3–S4 male sucrose, S5–S6 female cocaine, S7–S8 male cocaine. Pairing that order
-against the supplied folder names sorted **alphabetically** reproduces the
-observed marker pattern for all eight samples. The folders were built by
-assigning GSM accessions in GEO order to folder names in alphabetical order —
-two different orderings.
+**Fix:** `config.REFERENCE_SYMBOL_ALIASES`, with case-sensitive matching
+throughout. `tools/resolve_markers.py` checks every marker in the panel against
+the actual annotation before use: 31 matched directly, 5 via alias, 0 dangerous
+matches, 0 missing.
 
-**Correction applied** (`config.SAMPLE_REMAP`, built into `scripts/01_load_data.py`):
+---
 
-| Folder | GEO | True sex | True treatment |
+## 3. Sample identity — verified three ways
+
+Sample assignment was checked against three independent sources. **All three
+agree.**
+
+### 3.1 Supplemental Table S2 cell counts
+
+Table S2 of the paper lists per-sample cell counts. These are intrinsic to each
+matrix file, so they tie every folder to the sample name the authors used.
+
+| Table S2 label | Cells | Folder as supplied | Cells | Match |
+|---|---|---|---|---|
+| ♀ Sucrose Rep 1 | 9,072 | Female_Sucrose_1 | 9,072 | ✓ |
+| ♀ Sucrose Rep 2 | 11,693 | Female_Sucrose_2 | 11,693 | ✓ |
+| ♂ Sucrose Rep 1 | 13,193 | Male_Sucrose_1 | 13,193 | ✓ |
+| ♂ Sucrose Rep 2 | 11,033 | Male_Sucrose_2 | 11,033 | ✓ |
+| ♀ Cocaine Rep 1 | 13,072 | Female_Cocaine_1 | 13,072 | ✓ |
+| ♀ Cocaine Rep 2 | 9,367 | Female_Cocaine_2 | 9,367 | ✓ |
+| ♂ Cocaine Rep 1 | 10,437 | Male_Cocaine_1 | 10,437 | ✓ |
+| ♂ Cocaine Rep 2 | 11,124 | Male_Cocaine_2 | 11,124 | ✓ |
+| **Total** | **88,991** | | **88,991** | ✓ |
+
+Eight of eight, and the total matches the merged dataset exactly.
+
+*(Table S2 contains a typographical error: the fourth row is labelled
+"♂ Sucrose Rep 1" where "Rep 2" is intended. The cell count is unambiguous.)*
+
+### 3.2 GEO sample titles
+
+The GEO sample titles correspond to the same assignment.
+
+### 3.3 The authors' Supplemental Code
+
+The published Supplemental Code documents the mapping from CellRanger output
+directories to Seurat objects:
+
+```
+S1   → Female_sucrose_R1        S5   → Female_cocaine_R1
+S2   → Female_sucrose_R2        S6   → Female_cocaine_R2
+S3   → Male_sucrose_R1          S7   → Male_cocaine_R1
+S4   → Male_sucrose_R2          S8v2 → Male_cocaine_R2
+```
+
+Sex and treatment are applied there as hard-coded strings
+(`$gender_stim <- "male_cocaine"`) based on which directory a matrix came from.
+No marker-based verification appears anywhere in that code.
+
+**Conclusion:** the labels are used as deposited. The labelling chain is
+consistent from CellRanger output directory through to the matrices in this
+repository.
+
+---
+
+## 4. Unresolved: sex markers do not agree with the sample labels
+
+### 4.1 The observation
+
+Three sex-specific markers separate the eight samples cleanly, but the split
+follows the **treatment** field of the sample name rather than the **sex** field.
+Mean log-normalised expression per sample, post-QC:
+
+| Marker | Specificity | 4 Sucrose samples | 4 Cocaine samples |
 |---|---|---|---|
-| Female_Cocaine_1 | S1 | Female | Sucrose |
-| Female_Cocaine_2 | S2 | Female | Sucrose |
-| Female_Sucrose_1 | S3 | **Male** | Sucrose |
-| Female_Sucrose_2 | S4 | **Male** | Sucrose |
-| Male_Cocaine_1 | S5 | **Female** | Cocaine |
-| Male_Cocaine_2 | S6 | **Female** | Cocaine |
-| Male_Sucrose_1 | S7 | Male | **Cocaine** |
-| Male_Sucrose_2 | S8 | Male | **Cocaine** |
+| `roX1` | male (dosage compensation lncRNA) | 3.846 – 3.972 | 0.059 – 0.116 |
+| `roX2` | male (dosage compensation lncRNA) | 2.160 – 2.396 | 0.008 – 0.015 |
+| `Yp1` | female (yolk protein) | 0.000 – 0.001 | 0.065 – 0.255 |
+| `Yp2` | female (yolk protein) | 0.003 – 0.003 | 0.028 – 0.153 |
+| `Yp3` | female (yolk protein) | 0.006 – 0.010 | 0.069 – 0.428 |
+| `Sxl` | female | 0.695 – 0.984 | 1.227 – 1.762 |
 
-Four sex labels and four treatment labels changed. Original folder names are
-retained in `obs['sample_folder']`.
+The ranges do not overlap on any marker. No sample bridges the gap.
 
-Corrected design, balanced: Female/Cocaine 21,561 cells · Female/Sucrose 22,439 ·
-Male/Cocaine 24,226 · Male/Sucrose 20,765.
+Per sample:
 
-### Confidence — state this distinction in the report
+| Sample | roX1 | roX2 | Yp1 | Yp2 | Yp3 |
+|---|---|---|---|---|---|
+| Female_Sucrose_R1 | 3.968 | 2.396 | 0.001 | 0.003 | 0.006 |
+| Female_Sucrose_R2 | 3.846 | 2.160 | 0.000 | 0.003 | 0.008 |
+| Female_Cocaine_R1 | 0.062 | 0.008 | 0.066 | 0.028 | 0.069 |
+| Female_Cocaine_R2 | 0.116 | 0.015 | 0.065 | 0.056 | 0.091 |
+| Male_Sucrose_R1 | 3.850 | 2.310 | 0.001 | 0.003 | 0.010 |
+| Male_Sucrose_R2 | 3.972 | 2.368 | 0.001 | 0.003 | 0.008 |
+| Male_Cocaine_R1 | 0.059 | 0.011 | 0.104 | 0.062 | 0.161 |
+| Male_Cocaine_R2 | 0.068 | 0.013 | 0.255 | 0.153 | 0.428 |
 
-**Sex: confirmed.** After correction, `roX1` reads 3.898 in males vs 0.074 in
-females; `Yp1`–`Yp3` are ~100× higher in females. Two independent panels,
-opposite directions, non-overlapping groups.
+Yolk proteins are transcribed in female fat body and are absent from males. The
+highest yolk-protein value in the dataset (`Yp3` = 0.428) is in a sample labelled
+male.
 
-**Treatment: inferred.** No marker gene reports whether a fly consumed cocaine.
-This half rests on the deposition order in the authors' repository, not on the
-data. It is supported independently: under the corrected labels the male:female
-DE ratio is **8.0×** (96 vs 12 genes), and the paper reports males responding
-more than females (691 vs 322, ~2.1×). That prediction played no part in
-constructing the mapping.
+### 4.2 Controls that behave as expected
 
-### On the named-gene check
+Genes regulated post-transcriptionally, and therefore present in both sexes at
+the RNA level, show no such separation: `msl-2` (0.039–0.080), `mle`
+(0.252–0.376), `tra` (0.045–0.102). Only markers that are genuinely sex-specific
+at the transcript level split the samples, which is the expected behaviour and
+argues against a generic technical artefact.
 
-`tools/verify_remap.py` check 3 returned 50% agreement, but the split is
-informative rather than ambiguous:
+### 4.3 The consequence
 
-- **Up-regulated set: 5/6 agree** — IA-2 and CR34335 in both sexes, mt:lrRNA in males.
-- **Down-regulated set: 0/4 agree** — roX2 and ninaE, both sexes.
+Comparing cocaine with sucrose *within each declared sex* returns the sex markers
+among the most significant genes in **both** comparisons:
 
-If the treatment arms were swapped, *every* gene would flip, including the up
-set. The up set agreeing indicates the direction is correct. Both failures have
-known confounds: `roX2` is sex-linked and its variance is dominated by dosage
-compensation; `ninaE` is rhodopsin, so its abundance depends on how much retinal
-tissue was carried through dissection rather than on treatment. Neither is a
-sound positive control.
-
-`mt:lrRNA` at +3.034 in males is a large effect for a mitochondrial transcript.
-Mitochondrial fraction is also a QC metric — check whether `pct_counts_mt`
-differs by treatment before interpreting this as biology.
-
----
-
-## 5. Verification record
-
-| Check | Tool | Result |
+| Gene | Male-labelled contrast | Female-labelled contrast |
 |---|---|---|
-| Delimiter converted, 8/8 files 3 columns | `fix_features_separator.py` | PASS |
-| No unnamed genes survive | assertion in `01_load_data.py` | PASS |
-| Design is a full 2×2×2 | `01_load_data.py` | PASS |
-| Sex markers match corrected labels | `verify_remap.py` check 1 | PASS |
-| Male-biased response reproduces | `verify_remap.py` check 2 | PASS, 8.0× |
-| Paper's named genes | `verify_remap.py` check 3 | up set agrees, down set confounded |
-| Script and notebook paths agree | both run | identical cell counts |
+| `roX2` | −9.620 | −9.629 |
+| `roX1` | −9.539 | −9.125 |
+| `Yp1` | +7.684 | +6.453 |
+| `Yp3` | +5.234 | +3.479 |
+| `Yp2` | +5.217 | +3.829 |
+| `Sxl` | +1.065 | +1.588 |
+
+log₂ fold changes, all with adjusted *p* at or below machine precision.
+
+Each nominal treatment contrast is separating males from females.
+
+### 4.4 What this does and does not establish
+
+**Established:** the sex markers in the deposited data do not agree with the
+deposited sex labels, and the discrepancy did not arise during analysis or
+deposition — the labelling chain is consistent from CellRanger output through to
+GEO, and was verified three independent ways.
+
+**Not established:** which explanation is correct. Two are consistent with the
+evidence and cannot be distinguished from the deposited data:
+
+1. the sex annotation was transposed at some point before sequencing; or
+2. sex and treatment covary for a reason not described in the methods.
+
+**Referred to:** the corresponding authors (R.R.H. Anholt, T.F.C. Mackay),
+Clemson University.
+
+### 4.5 Reproducing this check
+
+```bash
+python tools/make_sexmarker_figure.py
+```
+
+Prints the per-sample table above and writes
+`results/figures/fig_sexmarker_discrepancy.png`.
 
 ---
 
-## 6. Note for the report
+## 5. Record of an incorrect correction, and its reversion
 
-All three problems are silent — the pipeline runs to completion with any of them
-present. The label scramble in particular would have produced a complete,
-internally consistent report answering the wrong question, with the sexual
-dimorphism result inverted. It was caught only because sex-specific marker genes
-were checked against the supplied labels rather than assumed to agree.
+Documented because the error is instructive.
 
-Verifying inherited labels costs a minute. Not verifying them costs the project.
+**What happened.** On finding the marker discrepancy (§4), an earlier version of
+this analysis concluded that the folder labels were wrong and reconstructed the
+"true" assignment from the deposition order in the authors' published R code —
+pairing S1–S8 against the folder names sorted alphabetically. That reconstruction
+produced a mapping under which the markers agreed with the sex labels, which
+appeared to confirm it.
+
+**Why it was wrong.** Supplemental Table S2 lists per-sample cell counts. Under
+the reconstructed mapping, `Female_Cocaine_1` (13,072 cells) would have been
+♀ Sucrose Rep 1 — but Table S2 gives that sample 9,072 cells. All eight cell
+counts contradicted the reconstruction and matched the folders as supplied.
+
+**What changed as a result.** The reverted analysis gives different numbers
+throughout:
+
+| | Incorrect mapping | Deposited labels |
+|---|---|---|
+| Pooled male:female DE ratio | 6.43 | 0.59 |
+| Female arm vs its permutation background | 0.38× (below) | 5.85× (above) |
+| Pseudobulk concordance (ρ) | 0.78 / 0.62 | 0.94 / 0.96 |
+| Mitochondrial signal | male-specific | female-specific, traced to single samples |
+
+**The lesson.** A plausible reconstruction from one source was refuted by
+another. Cell count settled it because it is intrinsic to the file, whereas
+deposition order is an inference about how files were ordered. When two sources
+disagree, prefer the one that cannot have been reordered.
+
+**Reversion:** `tools/revert_remap.py --apply`. The previous configuration is
+preserved at `scripts/config.py.pre-revert`, and outputs from the earlier
+analysis are marked `SUPERSEDED_` in `reports/`.
+
+---
+
+## 6. What reproduces
+
+Independent of the labelling question:
+
+| | Published | This analysis |
+|---|---|---|
+| Cells after QC | 86,224 | 86,177 (0.05% difference) |
+| Genes retained | — | 12,189 of 17,481 |
+| Clusters at resolution 0.8 | 36 | 30 (36 at ≈1.33) |
+| Cell types assigned | 36 | 24 of 30; 6 unannotated (15.7% of cells) |
+| Batch effect | none reported | 1 of 30 clusters >30% from one sample |
+
+Clustering and annotation do not depend on sample labels and are unaffected by
+§4.
+
+---
+
+## 7. Recommendations for anyone using this dataset
+
+1. **Check sex markers against declared labels before analysis.** One line of
+   code; neither the original analysis nor this one did it by default.
+2. **Verify marker gene symbols by gene ID**, not by name. This reference
+   contains at least one substitution (`trh` = *trachealess*) that silently
+   returns an unrelated gene.
+3. **Verify sample identity by cell count** against Supplemental Table S2 before
+   accepting any relabelling.
+4. **Do not interpret differential expression from these data as a cocaine
+   effect** until the labelling question is resolved.
