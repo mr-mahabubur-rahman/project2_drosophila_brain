@@ -1,23 +1,24 @@
-# Reanalysis of the cocaine-exposed *Drosophila* brain
+# Reanalysis of the cocaine-exposed *Drosophila* brain (GSE152495)
 
-### Do the published findings survive statistical controls the original analysis did not report?
+### The atlas reproduces. The sample labels do not agree with the data.
 
-**In one sentence:** a published single-cell atlas reports that cocaine produces
-691 differentially expressed genes in male fly brains and 322 in females — but
-when the same female samples are regrouped incorrectly, they yield *more*
-differentially expressed genes than the correct grouping does.
+Independent Scanpy-based reanalysis of the single-cell transcriptomic atlas
+published by **Baker et al. (2021)**, *Genome Research* 31:1927–1937
+([doi:10.1101/gr.268037.120](https://doi.org/10.1101/gr.268037.120)).
 
-This repository contains an independent reanalysis of **GSE152495**
-([Baker et al. 2021](https://doi.org/10.1101/gr.268037.120), *Genome Research*
-31:1927-1937), built from the deposited data using a different pipeline
-(Scanpy/Leiden/Wilcoxon rather than Seurat/SNN/MAST). It has two aims: to test
-which findings **reproduce**, and to test which **survive verification**.
+Quality filtering recovers **86,177 cells against the 86,224 reported** — a
+difference of 0.05% — and the clustering recovers the major neuronal and glial
+populations. But sex-specific marker genes in the deposited data do not agree
+with the deposited sex labels, and the consequence is that **neither treatment
+contrast can be separated from a sex contrast**.
 
-The cell count reproduces to within 0.05%. The reported sexual dimorphism does
-not survive a comparison against its own background.
+> **Status: the labelling discrepancy is unresolved and has been referred to the
+> original authors.** Until it is resolved, no differential expression result
+> from this dataset — in this repository or in the original publication — should
+> be interpreted as a cocaine effect. Full detail in
+> [`docs/data_provenance.md`](docs/data_provenance.md).
 
-📄 **[Full report (PDF)](reports/Drosophila_cocaine_reanalysis_report.pdf)** —
-31 pages, 20 figures, 5 tables · 🧬
+📄 **[Full report (PDF)](reports/)** · 🧬
 **[Data: GEO GSE152495](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE152495)**
 
 ---
@@ -26,33 +27,80 @@ not survive a comparison against its own background.
 
 ---
 
-## Summary of findings
+## The finding
 
-| Published finding | This reanalysis |
+Three sex-specific markers separate the eight samples cleanly — but the split
+follows the **treatment** field of the sample name, not the **sex** field.
+Ranges across the four samples in each group; none overlap:
+
+| Marker | Specificity | 4 Sucrose samples | 4 Cocaine samples |
+|---|---|---|---|
+| `roX1` | male (dosage compensation) | 3.846 – 3.972 | 0.059 – 0.116 |
+| `roX2` | male (dosage compensation) | 2.160 – 2.396 | 0.008 – 0.015 |
+| `Yp1` | female (yolk protein) | 0.000 – 0.001 | 0.065 – 0.255 |
+| `Yp3` | female (yolk protein) | 0.006 – 0.010 | 0.069 – 0.428 |
+| `Sxl` | female | 0.695 – 0.984 | 1.227 – 1.762 |
+
+Yolk proteins are not transcribed in males. The highest value in the dataset
+(`Yp3` = 0.428) is in a sample labelled male.
+
+Genes regulated post-transcriptionally and present in both sexes at the RNA level
+— `msl-2`, `mle`, `tra` — show no such separation, as expected. Only the
+genuinely sex-specific transcripts split the samples.
+
+**The consequence.** Comparing cocaine with sucrose within each declared sex
+returns the sex markers among the most significant genes in *both* comparisons:
+`roX1` and `roX2` at approximately −9.5 log₂FC with adjusted *p* below machine
+precision, and `Yp1` at +7.7 in the male-labelled contrast.
+
+![Sex marker discrepancy](results/figures/fig_sexmarker_discrepancy.png)
+
+### Sample identity was verified three ways
+
+All three agree, so the discrepancy did not arise during analysis or deposition:
+
+1. **Supplemental Table S2 cell counts** match all eight deposited matrices
+   exactly (9,072 / 11,693 / 13,193 / 11,033 / 13,072 / 9,367 / 10,437 / 11,124;
+   total 88,991). Cell count is intrinsic to each file.
+2. **GEO sample titles** correspond to the same assignment.
+3. **The authors' Supplemental Code** documents the same mapping from CellRanger
+   output directories (S1–S8v2) through to the Seurat objects.
+
+Neither the original analysis nor this one, as first written, checked sex markers
+against the declared labels. The check takes one line of code.
+
+---
+
+## What reproduces
+
+| Published | This reanalysis |
 |---|---|
 | 86,224 cells after QC | **86,177** — 0.05% difference |
 | 36 clusters at resolution 0.8 | **30**; reaches 36 at ~1.33 |
 | Cluster count plateaus at 0.8 | **Not reproduced** — monotonic increase |
-| Kenyon cells among top responders | 1st raw, **7th at matched power** |
-| Male-biased response, 2.15x | **0.97x to 6.43x** depending on the metric |
-| Female response, 322 genes | **Falls below its own background** |
+| All major cell types represented | 24 of 30 clusters assigned |
+| No batch effect | 1 of 30 clusters >30% from one sample |
 
-### The central result
+Clustering and annotation do not depend on sample labels and are unaffected by
+the discrepancy above.
 
-Within each sex, four samples permit two null contrasts besides the true
-treatment split, using identical cells, test and thresholds:
+---
 
-| | Treatment (real) | Replicate axis (null) | Diagonal (null) |
-|---|---|---|---|
-| **Male** | **90** | 7 | 14 |
-| **Female** | **14** | 39 | 35 |
+## Three data problems found before analysis
 
-In males the treatment effect exceeds both nulls by 6-13x. In females both nulls
-exceed it, and 64% of the 14 female genes also appear in a null contrast —
-including the yolk proteins Yp1-Yp3, independently identified as ambient RNA.
+Each would have propagated silently:
 
-**The design-level conclusions reproduce. The female response is not resolvable
-above between-sample variation at this replicate number.**
+1. **`features.tsv.gz` was space- rather than tab-delimited**, so
+   `scanpy.read_10x_mtx` could not assign gene symbols.
+2. **The gene *nanchung* (`nan`, Dmel_CG5842) is parsed by pandas as a missing
+   value**, leaving one gene unnamed and blocking HDF5 serialisation.
+3. **Five fly symbols are replaced by vertebrate ortholog names** in the
+   reference: `VGlut1`, `Adcy1`, `Pde4`, `Trhn`, `Tret1`.
+
+⚠️ **`trh` lowercase in this reference is Dmel_CG42865, *trachealess*** — a
+tracheal transcription factor, not tryptophan hydroxylase. A case-insensitive
+marker match would label a cluster serotonergic on the strength of a tracheal
+gene.
 
 ---
 
@@ -62,22 +110,17 @@ above between-sample variation at this replicate number.**
 
 ---
 
-## Three data problems found before analysis
+## Statistical controls
 
-Each would have propagated silently through the whole pipeline:
+Applied to the differential expression results. They characterise the data, but
+inherit the interpretive limitation above.
 
-1. **`features.tsv.gz` was space- rather than tab-delimited**, so
-   `scanpy.read_10x_mtx` could not assign gene symbols.
-2. **The gene *nanchung* (`nan`, Dmel_CG5842) is parsed by pandas as a missing
-   value**, leaving one gene unnamed and blocking HDF5 serialisation.
-3. **Sample folder labels did not match their contents.** Sex-specific markers
-   separated the samples by the *treatment* field, not the *sex* field.
-   Identities were reconstructed from the deposition order in the authors'
-   published code and verified against two independent marker panels.
-
-The reference also substitutes vertebrate ortholog names for five fly symbols.
-Note `trh` lowercase here is *trachealess*, an unrelated gene — marker matching
-must be case-sensitive.
+| Script | Question | Result |
+|---|---|---|
+| `05b` | Do cell-level results hold at replicate level? | 100% direction agreement, ρ = 0.94 / 0.96 |
+| `07` | Does any gene respond *differently* by sex? | 0 genes at FDR < 0.05 (4 residual df) |
+| `08B` | Is the response ranking power or biology? | ρ = 0.63 size vs DE count; ranking shifts |
+| `10` | Is the effect larger than its own background? | Male 90 vs 16/44; female 152 vs 19/33 |
 
 ---
 
@@ -86,7 +129,7 @@ must be case-sensitive.
 | | |
 |---|---|
 | **Accession** | [GSE152495](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE152495) |
-| **Raw archive** | [GSE152495_RAW.tar](https://ftp.ncbi.nlm.nih.gov/geo/series/GSE152nnn/GSE152495/suppl/GSE152495_RAW.tar) (~1.5 GB) |
+| **Raw archive** | [GSE152495_RAW.tar](https://ftp.ncbi.nlm.nih.gov/geo/series/GSE152nnn/GSE152495/suppl/GSE152495_RAW.tar) |
 | **Publication** | [doi:10.1101/gr.268037.120](https://doi.org/10.1101/gr.268037.120) |
 | **Design** | 8 samples · sex (F/M) × treatment (cocaine/sucrose) × 2 replicates |
 | **Platform** | 10x Genomics Chromium, CellRanger v3.1, *D. melanogaster* Release 6 |
@@ -96,7 +139,7 @@ Count matrices are **not redistributed here**. Rebuild `data/` with:
 ```bash
 bash tools/download_data.sh      # fetches and unpacks GSE152495_RAW.tar
 # fill in tools/sample_map.tsv (see its header), then
-bash tools/organize_data.sh      # builds data/<Sample_Name>/
+bash tools/organize_data.sh
 ```
 
 ---
@@ -109,7 +152,6 @@ uv pip install -r requirements.txt
 python tools/check_environment.py
 
 python scripts/01_load_data.py
-python tools/verify_sample_mapping.py    # confirms labels using roX1/roX2
 python scripts/02_qc_filter.py
 python scripts/03_normalize_cluster.py
 python scripts/04_annotate_clusters.py   # fill the worksheet, then re-run
@@ -122,51 +164,54 @@ python scripts/07_interaction_test.py
 python scripts/08_sensitivity.py
 python scripts/09_reproduce_fig3.py
 python scripts/10_permutation_control.py
+
+# the labelling check
+python tools/make_sexmarker_figure.py
 ```
 
-Every stage writes an `.h5ad` checkpoint, so a failure at step 5 does not require
-redoing step 3. All stochastic steps use a fixed random seed. Setup instructions,
-including the WSL2 memory configuration needed on a 16 GB machine, are in
-[docs/SETUP.md](docs/SETUP.md).
-
----
-
-## Statistical controls
-
-| Script | Question | Result |
-|---|---|---|
-| `05b` | Do cell-level results hold at replicate level? | 100% direction agreement, rho = 0.78 |
-| `07` | Does any gene respond *differently* by sex? | 0 genes at FDR < 0.05 |
-| `08A` | Do mitochondrial genes drive the male bias? | No — pooled ratio unchanged |
-| `08B` | Is the response ranking power or biology? | Kenyon cells 1st to 7th |
-| `10` | Is the effect larger than its own background? | Male yes; female no |
+Every stage writes an `.h5ad` checkpoint. All stochastic steps use a fixed seed.
+Setup instructions, including the WSL2 memory configuration needed on a 16 GB
+machine, are in [`docs/SETUP.md`](docs/SETUP.md).
 
 ---
 
 ## Repository layout
 
     data/          8 CellRanger sample folders       [not tracked]
-    docs/          reference PDFs, provenance, setup guide
+    docs/          provenance, setup guide, reference PDFs
     notebooks/     the pipeline as JupyterLab notebooks
     peer_review/   review checklist and rebuttal templates
-    reports/       final report (docx + pdf)
-    results/       figures, tables, checkpoints
+    reports/       current draft; superseded outputs marked SUPERSEDED_
+    results/       figures (+ supplementary/), tables, checkpoints
     scripts/       config.py + numbered pipeline (01-10)
-    tools/         data download, label verification, figures
+    tools/         data download, verification, figure generation
 
-`scripts/config.py` holds every analysis parameter with the reasoning for each,
-so a reviewer can change one number and re-run rather than searching the code.
+`scripts/config.py` holds every analysis parameter with the reasoning for each.
+
+---
+
+## Note on an earlier version of this analysis
+
+An earlier version concluded that the folder labels were scrambled and applied a
+reassignment inferred from the deposition order in the authors' published code.
+Supplemental Table S2 showed that reassignment to be wrong — the per-sample cell
+counts match the folders as supplied — and it was reverted.
+
+The history is preserved. Outputs from the earlier analysis are marked
+`SUPERSEDED_` in `reports/`, the previous configuration is at
+`scripts/config.py.pre-revert`, and §5 of
+[`docs/data_provenance.md`](docs/data_provenance.md) records what changed and
+why.
 
 ---
 
 ## Limitations
 
-- **Treatment labels are inferred, not verified.** Sex was confirmed by two
-  marker panels; treatment rests on the deposition order in the authors' code.
+- **Treatment labels are inferred from metadata**, not verifiable from the data.
 - **Two null contrasts per sex** is all four samples allow — an
-  order-of-magnitude comparison, not a p-value.
-- **Absence of evidence is not evidence of absence.** A real female effect
-  smaller than the between-sample variation would look identical.
+  order-of-magnitude comparison, not a *p*-value.
+- **The discrepancy is unresolved.** Two explanations are consistent with the
+  evidence and cannot be distinguished from the deposited data.
 - **Six clusters (15.7% of cells) are unannotated.**
 - **One cluster was excluded post hoc** after its depth imbalance was observed.
 
@@ -175,10 +220,10 @@ so a reviewer can change one number and re-run rather than searching the code.
 ## Citation
 
 > Baker BM, Mokashi SS, Shankar V, Hatfield JS, Hannah RC, Mackay TFC, Anholt
-> RRH. 2021. The Drosophila brain on cocaine at single-cell resolution.
-> Genome Research 31: 1927-1937. doi:10.1101/gr.268037.120
+> RRH. 2021. The *Drosophila* brain on cocaine at single-cell resolution.
+> *Genome Research* 31: 1927–1937. doi:10.1101/gr.268037.120
 
 ## Acknowledgement
 
 Self-directed reanalysis project. AI assistance is documented in
-[reports/AI_USAGE_DISCLOSURE.md](reports/AI_USAGE_DISCLOSURE.md).
+[`reports/AI_USAGE_DISCLOSURE.md`](reports/AI_USAGE_DISCLOSURE.md).
