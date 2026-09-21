@@ -12,13 +12,14 @@ populations. But sex-specific marker genes in the deposited data do not agree
 with the deposited sex labels, and the consequence is that **neither treatment
 contrast can be separated from a sex contrast**.
 
-> **Status: the labelling discrepancy is unresolved and has been referred to the
-> original authors.** Until it is resolved, no differential expression result
+> **Status: the labelling discrepancy is unresolved; resolving it requires
+> information not contained in the deposited data.** Until it is resolved, no differential expression result
 > from this dataset — in this repository or in the original publication — should
 > be interpreted as a cocaine effect. Full detail in
 > [`docs/data_provenance.md`](docs/data_provenance.md).
 
-📄 **[Full report (PDF)](reports/)** · 🧬
+📄 **[Full report (Word)](reports/Drosophila_cocaine_reanalysis_report_v2.docx)**
+· [Markdown version](reports/report_full_v2.md) · 🧬
 **[Data: GEO GSE152495](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE152495)**
 
 ---
@@ -29,29 +30,37 @@ contrast can be separated from a sex contrast**.
 
 ## The finding
 
-Three sex-specific markers separate the eight samples cleanly — but the split
-follows the **treatment** field of the sample name, not the **sex** field.
-Ranges across the four samples in each group; none overlap:
+Five transcript-level sex markers separate the eight samples cleanly — but the
+split follows the **treatment** field of the sample name, not the **sex** field.
+Mean log-normalised expression, ranges across the four samples in each group;
+none overlap:
 
 | Marker | Specificity | 4 Sucrose samples | 4 Cocaine samples |
 |---|---|---|---|
 | `roX1` | male (dosage compensation) | 3.846 – 3.972 | 0.059 – 0.116 |
 | `roX2` | male (dosage compensation) | 2.160 – 2.396 | 0.008 – 0.015 |
 | `Yp1` | female (yolk protein) | 0.000 – 0.001 | 0.065 – 0.255 |
+| `Yp2` | female (yolk protein) | 0.003 – 0.003 | 0.028 – 0.153 |
 | `Yp3` | female (yolk protein) | 0.006 – 0.010 | 0.069 – 0.428 |
-| `Sxl` | female | 0.695 – 0.984 | 1.227 – 1.762 |
+| `Sxl` | female (supporting only — sex-specific mainly by splicing) | 0.682 – 0.971 | 1.222 – 1.747 |
+
+Per-sample values: [`results/tables/sexmarker_per_sample_means.csv`](results/tables/sexmarker_per_sample_means.csv).
 
 Yolk proteins are not transcribed in males. The highest value in the dataset
 (`Yp3` = 0.428) is in a sample labelled male.
 
 Genes regulated post-transcriptionally and present in both sexes at the RNA level
-— `msl-2`, `mle`, `tra` — show no such separation, as expected. Only the
-genuinely sex-specific transcripts split the samples.
+show no comparable separation: `mle` and `tra` overlap between the two groups, and
+`msl-2` differs by about 1.4-fold on average, against more than 30-fold for `roX1`
+and more than 100-fold for `roX2`. Only the transcript-level sex markers split the
+samples strongly.
 
 **The consequence.** Comparing cocaine with sucrose within each declared sex
-returns the sex markers among the most significant genes in *both* comparisons:
-`roX1` and `roX2` at approximately −9.5 log₂FC with adjusted *p* below machine
-precision, and `Yp1` at +7.7 in the male-labelled contrast.
+returns the sex markers as significant in *both* comparisons: `roX1` and `roX2` at
+approximately −9.5 log₂FC with adjusted *p* below machine precision, and `Yp1` at
++7.7 in the male-labelled contrast. The original report is consistent with this:
+Baker et al. list `roX2` among the genes responding globally to cocaine (their
+Supplemental Tables S5–S6).
 
 ![Sex marker discrepancy](results/figures/fig_sexmarker_discrepancy.png)
 
@@ -118,7 +127,7 @@ inherit the interpretive limitation above.
 | Script | Question | Result |
 |---|---|---|
 | `05b` | Do cell-level results hold at replicate level? | 100% direction agreement, ρ = 0.94 / 0.96 |
-| `07` | Does any gene respond *differently* by sex? | 0 genes at FDR < 0.05 (4 residual df) |
+| `07` | Does any gene respond *differently* by sex? | Interaction: 0 genes at FDR < 0.05 (4 residual df). Treatment main effect: 23 genes, led by `roX2` and `roX1`; declared-sex effect on both ≈ 0 |
 | `08B` | Is the response ranking power or biology? | ρ = 0.63 size vs DE count; ranking shifts |
 | `10` | Is the effect larger than its own background? | Male 90 vs 16/44; female 152 vs 19/33 |
 
@@ -213,7 +222,10 @@ why.
 - **The discrepancy is unresolved.** Two explanations are consistent with the
   evidence and cannot be distinguished from the deposited data.
 - **Six clusters (15.7% of cells) are unannotated.**
-- **One cluster was excluded post hoc** after its depth imbalance was observed.
+- **One cluster (3,196 cells) was excluded** for mixed neuronal/glial identity.
+  The exclusion was first made under the superseded labels; under the deposited
+  labels its depth imbalance is modest (1.23-fold), and including it does not
+  change any conclusion.
 
 ---
 
@@ -225,5 +237,6 @@ why.
 
 ## Acknowledgement
 
-Self-directed reanalysis project. AI assistance is documented in
-[`reports/AI_USAGE_DISCLOSURE.md`](reports/AI_USAGE_DISCLOSURE.md).
+Self-directed reanalysis project. AI assistance is documented in Appendix A of
+the report, with the full prompt log in
+[`reports/AI_prompt_log.md`](reports/AI_prompt_log.md).
