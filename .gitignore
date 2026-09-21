@@ -53,3 +53,5 @@ venv/
 # Ruff / mypy
 .ruff_cache/
 .mypy_cache/
+docs/project2_guide.pdf
+docs/paper.pdf
