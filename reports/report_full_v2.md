@@ -866,7 +866,41 @@ log-normalised expression.
 
 ## Appendix A. AI Usage Disclosure
 
-[TO COMPLETE — this appendix must be filled in by the author. The template in
-`reports/AI_USAGE_DISCLOSURE.md` requires: each tool and model used and its
-purpose; the exact prompts, with date, purpose and what was changed or verified
-for each; the completed validation checklist; and the signed statement.]
+### A.1 Statement
+
+English is not my first language. I used an AI assistant to improve the clarity
+and readability of this report so that it is accessible to a wide audience. I also
+used AI assistance for figure scripts and report assembly, as listed below. All
+analysis decisions, interpretations and conclusions are my own. Every AI-generated
+output was reviewed by me. Reported numbers were checked against the pipeline's
+result tables, partly with AI assistance, and the key values were reproduced by
+running the code myself.
+
+### A.2 Tool used
+
+Claude (Anthropic), model Claude Opus 5, September 2026.
+
+### A.3 Prompts and purposes
+
+The complete prompt log is in `reports/AI_prompt_log.md`. The AI assistant was used to:
+
+- combine my drafts into one report and produce the Word document;
+- check reported numbers against the result tables, which identified two errors that I then confirmed (§3.5, §3.6);
+- revise the figure scripts for the sex-marker figure, graphical abstract and flowchart, which I then ran on my own machine;
+- verify the Lukas et al. 1996 reference;
+- improve the English throughout.
+
+### A.4 Validation
+
+- Reported numbers were checked against the pipeline's result tables (`results/tables/`), and the per-sample sex-marker values and the excluded-cluster depth ratio were reproduced by running the scripts myself.
+- The AI-assisted review found and corrected two errors in an earlier draft: the interaction-model result (§3.5) and outdated counts in §3.6. I confirmed both corrections against `interaction_global.csv` and Figure 10.
+- All figures were regenerated on my own machine from the repository scripts.
+- The Lukas et al. 1996 reference was verified against the published abstract, which led to a correction in the Introduction.
+- The AI assistant accessed only material I provided: files uploaded to the conversation and this project's public GitHub repository.
+
+### A.5 Declaration
+
+I confirm that this disclosure is complete and accurate, and that I take full
+responsibility for the content of this report.
+
+Signature: Mahabubur Rahman    Date: September 21, 2026
