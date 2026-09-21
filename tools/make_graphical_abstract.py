@@ -192,7 +192,7 @@ def graphical_abstract(path):
             ha="center", fontsize=8.4, color=DARK)
     ax.text(0.5, 0.112,
             "No differential expression result from these data can presently be "
-            "attributed to cocaine. Referred to the original authors.",
+            "attributed to cocaine.",
             ha="center", fontsize=9.0, fontweight="bold", color=DARK)
 
     fig.savefig(path, dpi=300, bbox_inches="tight", facecolor="white")
@@ -205,7 +205,7 @@ def graphical_abstract(path):
 # ======================================================================
 def flowchart(path):
     fig, ax = plt.subplots(figsize=(8.6, 14.2))
-    ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis("off")
+    ax.set_xlim(0, 1); ax.set_ylim(-0.03, 1); ax.axis("off")
 
     ax.text(0.5, 0.986, "Analysis workflow", ha="center", fontsize=15,
             fontweight="bold", color=DARK)
@@ -268,15 +268,15 @@ def flowchart(path):
 
     controls = [
         ("Differential expression  [05]", "Cocaine vs sucrose within\neach declared sex",
-         "90 and 152 genes \u2014 but\nsex markers top both lists", False, "Fig 3C"),
+         "90 and 152 genes \u2014 but\nsex markers top both lists", False, "Fig 7"),
         ("Pseudobulk  [05b]", "Do cell-level results hold\nat replicate level?",
-         "100% direction agreement\n\u03c1 = 0.94, 0.96", True, "Fig 17"),
+         "100% direction agreement\n\u03c1 = 0.94, 0.96", True, "Fig 9A\u2013B"),
         ("Interaction model  [07]", "Does any gene respond\ndifferently by sex?",
-         "0 genes at FDR < 0.05\n(4 residual df)", False, "Fig 14"),
+         "no interaction at FDR < 0.05;\ntreatment effect led by roX2, roX1", False, "Fig 9C"),
         ("Cluster-size matching  [08B]", "Is the ranking power\nor biology?",
-         "\u03c1 = 0.63 size vs DE count;\nranking shifts when matched", False, "Fig 15"),
+         "\u03c1 = 0.63 size vs DE count;\nranking shifts when matched", False, "Fig 7D"),
         ("Permutation control  [10]", "Is the effect larger than\nits own background?",
-         "Male 90 vs 16 / 44\nFemale 152 vs 19 / 33", True, "Fig 16"),
+         "Male 90 vs 16 / 44\nFemale 152 vs 19 / 33", True, "Fig 9D"),
     ]
 
     cy = y_ctrl_top - 0.054
@@ -313,7 +313,7 @@ def flowchart(path):
             "Sex markers do not agree with the deposited labels, so neither treatment",
             ha="center", fontsize=8.0, color=DARK)
     ax.text(0.4225, ctop - 0.062,
-            "contrast can be separated from a sex contrast. Referred to the authors.",
+            "contrast can be separated from a sex contrast.",
             ha="center", fontsize=8.0, color=DARK)
 
     fig.savefig(path, dpi=300, bbox_inches="tight", facecolor="white")

@@ -46,8 +46,8 @@ same assignment from CellRanger output directory through to the Seurat objects.
 The discrepancy therefore did not arise during analysis or deposition.
 
 We report the reproduction results, document the discrepancy in full, and refrain
-from interpreting any differential expression result as a cocaine effect. The
-question has been referred to the original authors.
+from interpreting any differential expression result as a cocaine effect.
+Resolving the discrepancy requires information not contained in the deposited data.
 
 ![](results/figures/fig0_graphical_abstract.png)
 
@@ -76,8 +76,9 @@ startle responses, increased grooming and, at higher exposures, seizures
 produces sensitisation. These phenotypes are sexually dimorphic: male flies show
 greater locomotor impairment and more pronounced compulsive grooming than
 females (Baker et al. 2021), paralleling sex differences in human psychostimulant
-use, where women escalate to compulsive use more rapidly and metabolise cocaine
-faster than men (Becker and Koob 2016; Lukas et al. 1996).
+use, where women escalate to compulsive use more rapidly (Becker and Koob 2016)
+and, after the same intranasal dose, reach lower peak plasma cocaine levels than
+men (Lukas et al. 1996).
 
 The genetic architecture of cocaine consumption in flies has been mapped using
 the *Drosophila* Genetic Reference Panel, implicating dopaminergic neurons and
@@ -327,7 +328,9 @@ Over-representation analysis used GSEApy (Fang et al. 2023) against the Enrichr
 *Drosophila* libraries (Kuleshov et al. 2016): GO Biological Process 2018, GO
 Molecular Function 2018 and KEGG 2019. Up- and down-regulated genes were tested
 separately, with up to 150 genes per list ranked by adjusted *p*-value. Terms
-were considered enriched at adjusted *p* < 0.05. Enrichr tests against all
+were considered enriched at adjusted *p* < 0.05. Per-cell-type enrichment was run
+for the six groups with the most differentially expressed genes summed across both
+arms. Enrichr tests against all
 annotated fly genes, whereas the differential expression test could only detect
 brain-expressed genes surviving quality control; adjusted *p*-values are
 therefore optimistic for brain-expressed terms.
@@ -404,7 +407,7 @@ mixing), and that cluster remained 74.5% female among depth-matched cells agains
 a 56.4% background, indicating a genuine population rather than an artefact.
 
 Twenty-four clusters received cell-type labels using two independent marker
-panels (Figure 5). Six clusters (13,526 cells, 15.7%) were left unannotated where
+panels (Figure 5; Supplementary Figure S5). Six clusters (13,526 cells, 15.7%) were left unannotated where
 the panels disagreed. Populations corresponding to the paper's Kenyon cells
 (C11), surface glia (C22) and unannotated antennal/optic lobe cluster (C16) were
 identified by marker gene rather than cluster number. The paper's C17
@@ -450,7 +453,7 @@ field (Figure 6; mean log-normalised expression per sample):
 | `Yp1` | female (yolk protein) | 0.000 – 0.001 | 0.065 – 0.255 |
 | `Yp2` | female (yolk protein) | 0.003 – 0.003 | 0.028 – 0.153 |
 | `Yp3` | female (yolk protein) | 0.006 – 0.010 | 0.069 – 0.428 |
-| `Sxl` | female (supporting only) | 0.695 – 0.984 | 1.227 – 1.762 |
+| `Sxl` | female (supporting only) | 0.682 – 0.971 | 1.222 – 1.747 |
 
 `roX1` and `roX2` are lncRNAs of the dosage-compensation complex, expressed
 almost exclusively in males. Yolk proteins are transcribed in female fat body and
@@ -461,14 +464,16 @@ specificity arises largely through alternative splicing, which 3′ counting can
 resolve, it is treated as supporting rather than primary evidence.
 
 Genes whose expression is post-transcriptionally regulated and therefore
-present in both sexes at the RNA level — `msl-2` (0.039–0.080), `mle`
-(0.252–0.376), `tra` (0.045–0.102) — show no such separation, as expected. Only
-the markers that are genuinely sex-specific at the transcript level split the
-samples, which argues against a generic technical artefact.
+present in both sexes at the RNA level show no comparable separation: `mle`
+(0.248–0.359) and `tra` (0.044–0.098) overlap between the two groups, and
+`msl-2` (0.038–0.077) differs by about 1.4-fold on average, against more than
+30-fold for `roX1` and more than 100-fold for `roX2`. Only the markers that are
+sex-specific at the transcript level split the samples strongly, which argues
+against a generic technical artefact.
 
 **The consequence is direct.** Comparing cocaine with sucrose *within each
-declared sex* returns the sex markers among the most significant genes in both
-comparisons:
+declared sex* returns the sex markers as significant in both comparisons, with `roX1` and
+`roX2` among the most significant genes of all:
 
 | Gene | Male-labelled contrast (log₂FC) | Female-labelled contrast (log₂FC) |
 |---|---|---|
@@ -479,8 +484,9 @@ comparisons:
 | `Yp2` | +5.217 | +3.829 |
 | `Sxl` | +1.065 | +1.588 |
 
-All six appear among the significant genes in both arms, with adjusted *p* at or
-below machine precision. Each nominal treatment contrast is separating males from
+All six are significant in both arms. For `roX1`, `roX2` and `Sxl` the adjusted
+*p* is below machine precision in both; for the yolk proteins it ranges from
+3 × 10⁻²⁰⁷ (`Yp3`, male-labelled) to 0.0096 (`Yp2`, female-labelled). Each nominal treatment contrast is separating males from
 females. The original report is consistent with this: Baker et al. list `roX2`
 among the genes that responded globally to cocaine, down-regulated after
 consumption (their Supplemental Tables S5 and S6).
@@ -494,7 +500,7 @@ sample labels.
 Two explanations are consistent with the evidence and cannot be distinguished
 from the deposited data: the sex annotation may have been transposed at some
 point before sequencing, or sex and treatment may covary for a reason not
-described in the methods. The question has been referred to the original authors.
+described in the methods.
 
 ![](results/figures/fig_sexmarker_discrepancy.png)
 
@@ -503,7 +509,7 @@ described in the methods. The question has been referred to the original authors
 markers in each sample. (B) Samples plotted by `roX1` against `Yp1` expression
 (log scales) separate by declared treatment, not by declared sex. (C) Log₂ fold changes of
 the sex markers in the nominal cocaine-versus-sucrose contrast within each
-declared sex.
+declared sex; all are significant in both contrasts.
 
 ### 3.4 Differential expression results, reported but not interpreted
 
@@ -538,6 +544,15 @@ cell adhesion in the male-labelled arm (Figure 8). Under the earlier, incorrect
 label assignment the same analysis placed oxidative phosphorylation in the male
 arm — illustrating that this enrichment tracks specific samples rather than
 either biological variable.
+
+The pattern is not specific to Kenyon cells. Of the six cell-type groups tested,
+oxidative phosphorylation or mitochondrial electron transport was the top term in
+four of the female-labelled contrasts (central brain B cholinergic neurons,
+dopaminergic neurons, Kenyon cells and the antennal/optic lobe cluster) and
+appeared in only one male-labelled contrast. A mitochondrial signal that recurs
+across cell types in one arm is consistent with the sample-level mitochondrial
+variation described in §3.1, although that variation was measured on
+mitochondrially encoded reads and most OXPHOS genes are nuclear.
 
 ![](results/figures/05_volcano_male.png)
 
@@ -761,8 +776,9 @@ within 0.05% and recovers the cell-type atlas, but finds that sex-specific
 markers in the deposited data do not agree with the deposited sex labels. The
 consequence is that neither treatment contrast can be separated from a sex
 contrast, and no differential expression result from these data — ours or the
-original — can presently be attributed to cocaine. The question has been referred
-to the original authors, and this report will be updated when they respond.
+original — can presently be attributed to cocaine. Resolving the discrepancy requires
+information not contained in the deposited data, such as the original sample
+records.
 
 ---
 
@@ -790,7 +806,7 @@ Highfill CA, Baker BM, Stevens SD, Anholt RRH, Mackay TFC. 2019. Genetics of coc
 
 Kuleshov MV, Jones MR, Rouillard AD, Fernandez NF, Duan Q, Wang Z, Koplev S, Jenkins SL, Jagodnik KM, Lachmann A, et al. 2016. Enrichr: a comprehensive gene set enrichment analysis web server 2016 update. *Nucleic Acids Res* 44: W90–W97. doi:10.1093/nar/gkw377
 
-Lukas SE, Sholar M, Lundahl LH, Lamas X, Kouri E, Wines JD, Kragie L, Mendelson JH. 1996. Sex differences in plasma cocaine levels and subjective effects after acute cocaine administration in human volunteers. *Psychopharmacology* 125: 346–354. [CHECK before submission]
+Lukas SE, Sholar M, Lundahl LH, Lamas X, Kouri E, Wines JD, Kragie L, Mendelson JH. 1996. Sex differences in plasma cocaine levels and subjective effects after acute cocaine administration in human volunteers. *Psychopharmacology* 125: 346–354. doi:10.1007/BF02246017
 
 McClung C, Hirsh J. 1998. Stereotypic behavioral responses to free-base cocaine and the development of behavioral sensitization in *Drosophila*. *Curr Biol* 8: 109–112. doi:10.1016/s0960-9822(98)70041-7
 
@@ -837,6 +853,14 @@ components; 30 components (16.9% of variance) were retained.
 
 **Supplementary Figure S4.** Composition of each cluster by declared sex (top)
 and treatment (bottom); dashed lines mark the dataset-wide proportion.
+
+![](results/figures/umap_04_umap_markers.png)
+
+**Supplementary Figure S5.** Expression of canonical markers on the UMAP embedding:
+`repo` (glia), `elav` and `nSyb` (neurons), `ey` and `Fas2` (Kenyon cells), `VAChT`
+(cholinergic), `Gad1` (GABAergic), `ple` (dopaminergic), `SerT` (serotonergic),
+`Tdc2` (octopaminergic/tyraminergic) and `ninaE` (photoreceptors). Colour shows
+log-normalised expression.
 
 ---
 

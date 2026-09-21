@@ -1,0 +1,9 @@
+sample,declared_sex,declared_treatment,roX1,roX2,Yp1,Yp2,Yp3,Sxl,msl-2,mle,tra
+Female_Sucrose_R1,Female,Sucrose,3.9675,2.3963,0.0012,0.0026,0.0057,0.8225,0.0558,0.3347,0.0571
+Female_Sucrose_R2,Female,Sucrose,3.8459,2.1596,0.0004,0.0029,0.0084,0.6818,0.0565,0.3078,0.0443
+Female_Cocaine_R1,Female,Cocaine,0.0616,0.0077,0.0659,0.028,0.0685,1.2748,0.0393,0.2931,0.0741
+Female_Cocaine_R2,Female,Cocaine,0.1157,0.0155,0.0649,0.0556,0.0914,1.7468,0.0544,0.3587,0.0975
+Male_Sucrose_R1,Male,Sucrose,3.8497,2.3102,0.0009,0.0033,0.01,0.9641,0.0661,0.2602,0.0713
+Male_Sucrose_R2,Male,Sucrose,3.972,2.3676,0.001,0.0028,0.0082,0.9714,0.0775,0.3348,0.0656
+Male_Cocaine_R1,Male,Cocaine,0.0588,0.011,0.1043,0.0618,0.1605,1.2222,0.038,0.2485,0.077
+Male_Cocaine_R2,Male,Cocaine,0.0676,0.0125,0.2547,0.1531,0.4282,1.7328,0.052,0.3387,0.0686
